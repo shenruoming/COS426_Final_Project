@@ -1,0 +1,1 @@
+export { default as Spectator } from './Spectator.js';

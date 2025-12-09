@@ -1,4 +1,4 @@
-import { Group, BufferGeometry, MeshLambertMaterial, Mesh, BoxBufferGeometry, MeshBasicMaterial } from 'three';
+import { Group, BufferGeometry, Mesh, BoxBufferGeometry, MeshBasicMaterial } from 'three';
 
 class Grass extends Group {
     constructor(parent) {

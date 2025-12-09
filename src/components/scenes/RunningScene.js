@@ -1,6 +1,6 @@
 import * as Dat from 'dat.gui';
 import { Group, Scene, Color, AxesHelper } from 'three';
-import { RunningPath, Grass, Flower } from 'objects';
+import { RunningPath, SwimmingPath, Grass, Spectator } from 'objects';
 import { BasicLights } from 'lights';
 
 class RunningScene extends Scene {
@@ -18,14 +18,26 @@ class RunningScene extends Scene {
         // Set background to a nice color
         this.background = new Color(0x7ec0ee);
 
-        // Add ground to scene
-        // const grass = new Grass();
-        const path = new RunningPath(this);
-        const grass = new Grass(this);
-        this.add(path, grass)
+        // add lights to scene
         const lights = new BasicLights();
         this.add(lights);
 
+        // Add ground to scene: running
+        const runningPath = new RunningPath(this);
+        const grass = new Grass(this);
+        this.add(runningPath, grass)
+
+        // add spectators to scene
+        for (let i = 0; i < 5; i++) {
+            const spectator = new Spectator(this, -6, 10 * (i+1) - 30);
+            this.add(spectator);
+        }
+
+        // add water to scene: swimming
+        const swimmingPath = new SwimmingPath(this);
+        this.add(swimmingPath);
+
+        // for debugging
         const axesHelper = new AxesHelper( 5 );
         this.add( axesHelper );
 

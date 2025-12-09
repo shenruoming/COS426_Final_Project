@@ -25,7 +25,7 @@ class Spectator extends Group {
     }
 
     update(timeStamp) {
-        this.position.z += 0.5;
+        this.position.z += this.parent.state.gameSpeed;
         if (this.position.z > CAMERA_Z_POS + CAMERA_OFFSET) {
             this.position.z -= 1000;
         }

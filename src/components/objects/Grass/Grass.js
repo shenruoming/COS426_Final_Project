@@ -1,11 +1,12 @@
 import { Group, BufferGeometry, Mesh, BoxBufferGeometry, MeshBasicMaterial } from 'three';
+import { PATH_LENGTH } from '../../config';
 
 class Grass extends Group {
     constructor(parent) {
         // Call parent Group() constructor
         super();
 
-        const geometry = new BoxBufferGeometry( 20, -1, 2500 );
+        const geometry = new BoxBufferGeometry( 20, -1, PATH_LENGTH );
         const material = new MeshBasicMaterial( { color: 0x388004 } );
         const path = new Mesh( geometry, material );
 
@@ -14,10 +15,10 @@ class Grass extends Group {
         this.add(path);
 
         // Add self to parent's update list
-        parent.addToUpdateList(this);
+        parent.addToTerrainUpdateList(this);
     }
 
-    update(timeStamp) {
+    update(timeStamp, terrainPhase) {
         return;
     }
 }

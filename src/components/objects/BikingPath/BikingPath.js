@@ -1,7 +1,7 @@
 import { Group, Box3, Mesh, BoxBufferGeometry, MeshBasicMaterial } from 'three';
 import { PATH_LENGTH, CAMERA_OFFSET, CAMERA_Z_POS, TerrainPhase } from '../../config';
 
-class SwimmingPath extends Group {
+class BikingPath extends Group {
     constructor(parent) {
         // Call parent Group() constructor
         super();
@@ -13,11 +13,10 @@ class SwimmingPath extends Group {
         };
 
         const geometry = new BoxBufferGeometry( 8, 1, PATH_LENGTH );
-        const material = new MeshBasicMaterial( { color: 'blue' } );
+        const material = new MeshBasicMaterial( { color: 'pink' } );
         const path = new Mesh( geometry, material );
 
         path.position.set(0, -0.5, 0);
-
         this.add(path);
         this.position.z = -PATH_LENGTH - 45;
 
@@ -29,11 +28,11 @@ class SwimmingPath extends Group {
 
     update(timeStamp, terrainController) {
         const terrainPhase = terrainController.phase;
-        if (terrainPhase == TerrainPhase.BIKING && this.visible) {
+        if (terrainPhase == TerrainPhase.RUNNING && this.visible) {
             this.position.z += this.parent.state.gameSpeed;
             const path = this.children[0];
             const bbox = new Box3().setFromObject(path);
-            
+
             if (bbox.min.z > CAMERA_Z_POS + CAMERA_OFFSET) {
                 this.state.moving = false;
                 this.position.z = -PATH_LENGTH - 45;
@@ -41,7 +40,8 @@ class SwimmingPath extends Group {
             }
             return;
         }
-        if (terrainPhase == TerrainPhase.RUNNING && terrainController.numRunLaps == 2) {
+        if (terrainPhase == TerrainPhase.SWIMMING && terrainController.numSwimLaps == 2) {
+            console.log("start bike moving");
             this.visible = true;
             this.state.moving = true;
         }
@@ -49,11 +49,11 @@ class SwimmingPath extends Group {
             this.position.z += this.parent.state.gameSpeed;
             if (this.position.z > CAMERA_Z_POS + CAMERA_OFFSET) {
                 this.position.z = 0;
-                terrainController.numSwimLaps += 1;
+                terrainController.numBikeLaps += 1;
             }
         }
         return;
     }
 }
 
-export default SwimmingPath;
+export default BikingPath;

@@ -4,3 +4,4 @@ export * from './RunningPath';
 export * from './Grass';
 export * from './Spectator';
 export * from './SwimmingPath';
+export * from './Runner';

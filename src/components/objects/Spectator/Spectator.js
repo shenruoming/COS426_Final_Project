@@ -21,7 +21,7 @@ class Spectator extends Group {
         this.add(person);
 
         // Add self to parent's update list
-        // parent.addToUpdateList(this);
+        parent.addToUpdateList(this);
     }
 
     update(timeStamp) {

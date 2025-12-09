@@ -9,7 +9,7 @@
 import { WebGLRenderer, PerspectiveCamera, Vector3 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RunningScene } from 'scenes';
-import { CAMERA_Z_POS } from './components/config';
+import { CAMERA_Y_POS, CAMERA_Z_POS } from './components/config';
 
 // Initialize core ThreeJS components
 const scene = new RunningScene();
@@ -17,7 +17,7 @@ const camera = new PerspectiveCamera();
 const renderer = new WebGLRenderer({ antialias: true });
 
 // Set up camera
-camera.position.set(0, 8, CAMERA_Z_POS);
+camera.position.set(0, CAMERA_Y_POS, CAMERA_Z_POS);
 camera.lookAt(new Vector3(0, 0, 0));
 
 // Set up renderer, canvas, and minor CSS adjustments

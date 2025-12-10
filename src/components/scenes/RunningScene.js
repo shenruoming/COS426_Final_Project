@@ -7,6 +7,7 @@ import {
     Spectator,
     Runner,
     Swimmer,
+    Biker,
     TerrainController,
     BikingPath,
     Ocean,
@@ -30,7 +31,7 @@ class RunningScene extends Scene {
             terrainUpdateList: [],
             gameSpeed: 0,
             prevGameSpeed: 1,
-            paused: true
+            paused: true,
         };
 
         this.gameOver = false;

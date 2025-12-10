@@ -18,9 +18,10 @@ class RunningPath extends Group {
         const material = new MeshBasicMaterial( { color: 0x964B00 } );
         const path = new Mesh( geometry, material );
 
-        path.position.set(0, -0.5, 0);
+        path.position.set(0, -0.5, 10);
 
         this.add(path);
+        this.position.z = -PATH_LENGTH / 2;
 
         // Add self to parent's update list
         parent.addToTerrainUpdateList(this);
@@ -36,7 +37,7 @@ class RunningPath extends Group {
             if (bbox.min.z > CAMERA_Z_POS + CAMERA_OFFSET) {
                 console.log("got to shifting path")
                 this.state.moving = false;
-                this.position.z = -PATH_LENGTH - 45;
+                this.position.z = -PATH_LENGTH - 50;
                 this.visible = false;
             }
             return;

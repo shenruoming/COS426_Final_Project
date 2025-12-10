@@ -19,8 +19,8 @@ const camera = new PerspectiveCamera();
 const renderer = new WebGLRenderer({ antialias: true });
 
 // Set up camera
-camera.position.set(0, CAMERA_Y_POS, CAMERA_Z_POS);
-camera.lookAt(new Vector3(0, 0, 0));
+camera.position.set(0, 5, CAMERA_Z_POS-10);
+camera.lookAt(new Vector3(0, 0, -10));
 
 // Set up renderer, canvas, and minor CSS adjustments
 renderer.setPixelRatio(window.devicePixelRatio);
@@ -31,12 +31,12 @@ document.body.style.overflow = 'hidden'; // Fix scrolling
 document.body.appendChild(canvas);
 
 // Set up controls
-const controls = new OrbitControls(camera, canvas);
-controls.enableDamping = true;
-controls.enablePan = false;
-controls.minDistance = 4;
-controls.maxDistance = 16;
-controls.update();
+// const controls = new OrbitControls(camera, canvas);
+// controls.enableDamping = true;
+// controls.enablePan = false;
+// controls.minDistance = 4;
+// controls.maxDistance = 16;
+// controls.update();
 
 // Render loop
 const onAnimationFrameHandler = (timeStamp) => {
@@ -56,3 +56,28 @@ const windowResizeHandler = () => {
 };
 windowResizeHandler();
 window.addEventListener('resize', windowResizeHandler, false);
+
+// Add event listeners
+window.addEventListener('keydown', function (e) {
+    const key = e.key;
+    const player = scene.getObjectByName('runner');
+    const paused = scene.state.paused;
+    if (key.toLowerCase() == 'p') {
+        if (paused) {
+            scene.unpause();
+            player.onUnpause();
+        } else {
+            scene.pause();
+            player.onPause();
+        }
+    }
+    if (key == 'ArrowUp' && !paused) {
+        player.onUpKeyPressed();
+    }
+    if (key == 'ArrowLeft' && !paused) {
+        player.onLeftKeyPressed();
+    }
+    if (key == 'ArrowRight' && !paused) {
+        player.onRightKeyPressed();
+    }
+});

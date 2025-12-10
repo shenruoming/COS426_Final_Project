@@ -13,12 +13,12 @@ class BikingPath extends Group {
         };
 
         const geometry = new BoxBufferGeometry( 8, 1, PATH_LENGTH );
-        const material = new MeshBasicMaterial( { color: 'pink' } );
+        const material = new MeshBasicMaterial( { color: 0x38393b } );
         const path = new Mesh( geometry, material );
 
         path.position.set(0, -0.5, 0);
         this.add(path);
-        this.position.z = -PATH_LENGTH - 45;
+        this.position.z = -PATH_LENGTH - 40;
 
         // Add self to parent's update list
         parent.addToTerrainUpdateList(this);
@@ -35,7 +35,7 @@ class BikingPath extends Group {
 
             if (bbox.min.z > CAMERA_Z_POS + CAMERA_OFFSET) {
                 this.state.moving = false;
-                this.position.z = -PATH_LENGTH - 45;
+                this.position.z = -PATH_LENGTH - 35;
                 this.visible = false;
             }
             return;

@@ -16,7 +16,7 @@ class Ocean extends Group {
         }
 
         // ocean
-        let geometry = new THREE.PlaneGeometry( 40, PATH_LENGTH + 20, 20, 30 );
+        let geometry = new THREE.PlaneGeometry( 50, PATH_LENGTH + 20, 30, 30 );
         geometry.rotateX( - Math.PI / 2 );
         const mergedGeo = BufferGeometryUtils.mergeVertices(geometry);
 

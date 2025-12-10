@@ -24,7 +24,7 @@ class Grass extends Group {
 
         // floor
 
-		let geometry = new THREE.PlaneGeometry( 20, PATH_LENGTH, 100, 100 );
+		let geometry = new THREE.PlaneGeometry( 20, PATH_LENGTH + 10, 100, 100 );
 		geometry.rotateX( - Math.PI / 2 );
 
         // vertex displacement

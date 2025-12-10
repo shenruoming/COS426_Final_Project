@@ -56,6 +56,8 @@ class Runner extends Group {
         this.shirtColor = Colors.yellow;
         this.shortsColor = Colors.olive;
         this.stepFreq = 2;
+        this.jumpHeight = 5; // controls how high the character jumps
+        this.jumpDuration = 0.5; // Controls how long the jump lasts (in seconds)
 
         // Initialize the character.
         init();
@@ -184,42 +186,209 @@ class Runner extends Group {
             self.element.add(self.leftLeg);
             self.element.add(self.rightLeg);
 
-            const scaleFactor = 0.004;
-            self.element.scale.set(scaleFactor, scaleFactor, scaleFactor);
-            self.add(self.element);
-        }
+            self.isJumping = false;
+            self.isSwitchingLeft = false;
+            self.isSwitchingRight = false;
+            self.currentLane = 0;
+            self.queuedActions = [];
+            self.runningStartTime = new Date() / 1000;
 
-        this.update = function () {
-            // self.element.rotation.y += 0.02;
             self.element.position.x = 0;
             self.element.position.z = 8;
             self.element.position.y = 1.2;
-            // self.element.position.y = self.sinusoid(
-            //     2 * self.stepFreq,
-            //     0,
-            //     20,
-            //     0
-            // );
-            self.head.rotation.x =
-                self.sinusoid(2 * self.stepFreq, -10, -5, 0) * deg2Rad;
-            self.torso.rotation.x =
-                self.sinusoid(2 * self.stepFreq, -10, -5, 180) * deg2Rad;
-            self.leftArm.rotation.x =
-                self.sinusoid(self.stepFreq, -70, 50, 180) * deg2Rad;
-            self.rightArm.rotation.x =
-                self.sinusoid(self.stepFreq, -70, 50, 0) * deg2Rad;
-            self.leftLowerArm.rotation.x =
-                self.sinusoid(self.stepFreq, 70, 140, 180) * deg2Rad;
-            self.rightLowerArm.rotation.x =
-                self.sinusoid(self.stepFreq, 70, 140, 0) * deg2Rad;
-            self.leftLeg.rotation.x =
-                self.sinusoid(self.stepFreq, -20, 80, 0) * deg2Rad;
-            self.rightLeg.rotation.x =
-                self.sinusoid(self.stepFreq, -20, 80, 180) * deg2Rad;
-            self.leftLowerLeg.rotation.x =
-                self.sinusoid(self.stepFreq, -130, 5, 240) * deg2Rad;
-            self.rightLowerLeg.rotation.x =
-                self.sinusoid(self.stepFreq, -130, 5, 60) * deg2Rad;
+
+            const scaleFactor = 0.004;
+            self.element.scale.set(scaleFactor, scaleFactor, scaleFactor);
+            self.add(self.element);
+
+            var gameOver = false;
+            var paused = true;
+
+            // Start receiving feedback from the player.
+            let keysAllowed = {};
+            document.addEventListener('keydown', function (e) {
+                console.log(keysAllowed);
+                if (!gameOver) {
+                    console.log('key pressed');
+                    var key = e.key;
+                    console.log(key);
+                    if (keysAllowed[key] === false) return;
+                    keysAllowed[key] = false;
+                    console.log(keysAllowed);
+                    if (paused && key.toLowerCase() != 'p') {
+                        paused = false;
+                        self.onUnpause();
+                        if (key == 'ArrowUp') {
+                            self.onUpKeyPressed();
+                        } else if (key == 'ArrowLeft') {
+                            self.onLeftKeyPressed();
+                        } else if (key == 'ArrowRight') {
+                            self.onRightKeyPressed();
+                        }
+                    } else {
+                        if (key.toLowerCase() == 'p') {
+                            paused = true;
+                            self.onPause();
+                        }
+                        if (key == 'ArrowUp' && !paused) {
+                            self.onUpKeyPressed();
+                        }
+                        if (key == 'ArrowLeft' && !paused) {
+                            self.onLeftKeyPressed();
+                        }
+                        if (key == 'ArrowRight' && !paused) {
+                            self.onRightKeyPressed();
+                        }
+                    }
+                }
+            });
+            document.addEventListener('keyup', function (e) {
+                keysAllowed[e.key] = true;
+            });
+        }
+
+        this.update = function () {
+            var currentTime = new Date() / 1000;
+
+            // Apply actions to the character if none are currently being
+            // carried out.
+            if (
+                !self.isJumping &&
+                !self.isSwitchingLeft &&
+                !self.isSwitchingRight &&
+                self.queuedActions.length > 0
+            ) {
+                switch (self.queuedActions.shift()) {
+                    case 'ArrowUp':
+                        self.isJumping = true;
+                        self.jumpStartTime = new Date() / 1000;
+                        break;
+                    case 'ArrowLeft':
+                        self.isSwitchingLeft = true;
+                        console.log(self.isSwitchingLeft);
+                        break;
+                    case 'ArrowRight':
+                        self.isSwitchingRight = true;
+                        break;
+                }
+            }
+
+            // If the character is jumping, update the height of the character.
+            // Otherwise, the character continues running.
+            if (self.isJumping) {
+                var jumpClock = currentTime - self.jumpStartTime;
+                self.element.position.y =
+                    self.jumpHeight *
+                    Math.sin((1 / self.jumpDuration) * Math.PI * jumpClock);
+                if (jumpClock > self.jumpDuration) {
+                    self.isJumping = false;
+                    self.runningStartTime += self.jumpDuration;
+                    // back to the OG position
+                    self.element.position.y = 1.2;
+                }
+            } else {
+                var runningClock = currentTime - self.runningStartTime;
+                // self.element.position.y = self.sinusoid(
+                //     2 * self.stepFreq,
+                //     0,
+                //     20,
+                //     0,
+                //     runningClock
+                // );
+                self.head.rotation.x =
+                    self.sinusoid(2 * self.stepFreq, -10, -5, 0, runningClock) *
+                    deg2Rad;
+                self.torso.rotation.x =
+                    self.sinusoid(
+                        2 * self.stepFreq,
+                        -10,
+                        -5,
+                        180,
+                        runningClock
+                    ) * deg2Rad;
+                self.leftArm.rotation.x =
+                    self.sinusoid(self.stepFreq, -70, 50, 180, runningClock) *
+                    deg2Rad;
+                self.rightArm.rotation.x =
+                    self.sinusoid(self.stepFreq, -70, 50, 0, runningClock) *
+                    deg2Rad;
+                self.leftLowerArm.rotation.x =
+                    self.sinusoid(self.stepFreq, 70, 140, 180, runningClock) *
+                    deg2Rad;
+                self.rightLowerArm.rotation.x =
+                    self.sinusoid(self.stepFreq, 70, 140, 0, runningClock) *
+                    deg2Rad;
+                self.leftLeg.rotation.x =
+                    self.sinusoid(self.stepFreq, -20, 80, 0, runningClock) *
+                    deg2Rad;
+                self.rightLeg.rotation.x =
+                    self.sinusoid(self.stepFreq, -20, 80, 180, runningClock) *
+                    deg2Rad;
+                self.leftLowerLeg.rotation.x =
+                    self.sinusoid(self.stepFreq, -130, 5, 240, runningClock) *
+                    deg2Rad;
+                self.rightLowerLeg.rotation.x =
+                    self.sinusoid(self.stepFreq, -130, 5, 60, runningClock) *
+                    deg2Rad;
+
+                // If the character is not jumping, it may be switching lanes.
+                if (self.isSwitchingLeft) {
+                    if (self.element.position.x <= -2.3) {
+                        self.element.position.x = -2.3;
+                    } else {
+                        self.element.position.x -= 2.3;
+                    }
+                    self.isSwitchingLeft = false;
+                }
+                if (self.isSwitchingRight) {
+                    if (self.element.position.x >= 2.3) {
+                        self.element.position.x = 2.3;
+                    } else {
+                        self.element.position.x += 2.3;
+                    }
+                    self.isSwitchingRight = false;
+                }
+            }
+        };
+
+        /**
+         * Handles character activity when the left key is pressed.
+         */
+        this.onLeftKeyPressed = function () {
+            self.queuedActions.push('ArrowLeft');
+        };
+
+        /**
+         * Handles character activity when the up key is pressed.
+         */
+        this.onUpKeyPressed = function () {
+            self.queuedActions.push('ArrowUp');
+        };
+
+        /**
+         * Handles character activity when the right key is pressed.
+         */
+        this.onRightKeyPressed = function () {
+            self.queuedActions.push('ArrowRight');
+        };
+
+        /**
+         * Handles character activity when the game is paused.
+         */
+        this.onPause = function () {
+            self.pauseStartTime = new Date() / 1000;
+        };
+
+        /**
+         * Handles character activity when the game is unpaused.
+         */
+        this.onUnpause = function () {
+            var currentTime = new Date() / 1000;
+            var pauseDuration = currentTime - self.pauseStartTime;
+            self.runningStartTime += pauseDuration;
+            if (self.isJumping) {
+                self.jumpStartTime += pauseDuration;
+            }
         };
     }
 

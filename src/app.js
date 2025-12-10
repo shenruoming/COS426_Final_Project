@@ -19,7 +19,7 @@ const camera = new PerspectiveCamera();
 const renderer = new WebGLRenderer({ antialias: true });
 
 // Set up camera
-camera.position.set(0, 5, CAMERA_Z_POS-10);
+camera.position.set(0, 5, CAMERA_Z_POS - 10);
 camera.lookAt(new Vector3(0, 0, -10));
 
 // Set up renderer, canvas, and minor CSS adjustments
@@ -60,7 +60,7 @@ window.addEventListener('resize', windowResizeHandler, false);
 // Add event listeners
 window.addEventListener('keydown', function (e) {
     const key = e.key;
-    const player = scene.getObjectByName('runner');
+    const player = scene.getObjectByName('biker');
     const paused = scene.state.paused;
     if (key.toLowerCase() == 'p') {
         if (paused) {
@@ -71,8 +71,19 @@ window.addEventListener('keydown', function (e) {
             player.onPause();
         }
     }
-    if (key == 'ArrowUp' && !paused) {
+    if (
+        key == 'ArrowUp' &&
+        !paused &&
+        typeof player.onUpKeyPressed === 'function'
+    ) {
         player.onUpKeyPressed();
+    }
+    if (
+        key == 'ArrowDown' &&
+        !paused &&
+        typeof player.onDownKeyPressed === 'function'
+    ) {
+        player.onDownKeyPressed();
     }
     if (key == 'ArrowLeft' && !paused) {
         player.onLeftKeyPressed();

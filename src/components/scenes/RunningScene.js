@@ -43,10 +43,18 @@ class RunningScene extends Scene {
 
         this.terrainController = new TerrainController();
 
-        // add player to scene: start with runner
-        const runner = new Runner();
-        this.addToUpdateList(runner);
-        this.add(runner);
+        // add player to scene: runner, swimmer, biker
+        // const runner = new Runner();
+        // this.addToUpdateList(runner);
+        // this.add(runner);
+
+        // const swimmer = new Swimmer();
+        // this.addToUpdateList(swimmer);
+        // this.add(swimmer);
+
+        const biker = new Biker();
+        this.addToUpdateList(biker);
+        this.add(biker);
 
         // Add ground to scene: running
         const runningPath = new RunningPath(this);
@@ -67,18 +75,6 @@ class RunningScene extends Scene {
         const bikingPath = new BikingPath(this);
         const mountains = new Mountains(this);
         this.add(bikingPath, mountains);
-
-        // const runner = new Runner();
-        // this.addToUpdateList(runner);
-        // this.add(runner);
-
-        // const swimmer = new Swimmer();
-        // this.addToUpdateList(swimmer);
-        // this.add(swimmer);
-
-        const biker = new Biker();
-        this.addToUpdateList(biker);
-        this.add(biker);
 
         // for debugging
         const axesHelper = new AxesHelper(5);

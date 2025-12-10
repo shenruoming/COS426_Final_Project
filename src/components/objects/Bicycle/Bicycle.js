@@ -23,7 +23,7 @@ class Bicycle extends Group {
 
         const scaleFactor = 0.8;
         this.scale.set(scaleFactor, scaleFactor, scaleFactor);
-        this.position.z = 8;
+        this.position.z = 7;
         this.rotation.y = 90 * deg2Rad;
 
         // Add self to parent's update list

@@ -290,7 +290,7 @@ class Runner extends Group {
             //                 self.onRightKeyPressed();
             //             }
             //         }
-                // }
+            // }
             // });
             // document.addEventListener('keyup', function (e) {
             //     keysAllowed[e.key] = true;

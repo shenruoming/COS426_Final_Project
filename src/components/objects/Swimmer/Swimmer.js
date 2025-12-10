@@ -34,6 +34,7 @@ class Swimmer extends Group {
         // };
 
         this.Character();
+        this.name = 'swimmer';
     }
 
     sinusoid(frequency, minimum, maximum, phase) {
@@ -261,44 +262,44 @@ class Swimmer extends Group {
 
             // Start receiving feedback from the player.
             let keysAllowed = {};
-            document.addEventListener('keydown', function (e) {
-                if (!gameOver) {
-                    console.log('key pressed');
-                    var key = e.key;
-                    console.log(key);
-                    if (keysAllowed[key] === false) return;
-                    keysAllowed[key] = false;
-                    // console.log(keysAllowed);
-                    if (paused && key.toLowerCase() != 'p') {
-                        paused = false;
-                        self.onUnpause();
-                        if (key == 'ArrowDown') {
-                            self.onDownKeyPressed();
-                        } else if (key == 'ArrowLeft') {
-                            self.onLeftKeyPressed();
-                        } else if (key == 'ArrowRight') {
-                            self.onRightKeyPressed();
-                        }
-                    } else {
-                        if (key.toLowerCase() == 'p') {
-                            paused = true;
-                            self.onPause();
-                        }
-                        if (key == 'ArrowDown' && !paused) {
-                            self.onDownKeyPressed();
-                        }
-                        if (key == 'ArrowLeft' && !paused) {
-                            self.onLeftKeyPressed();
-                        }
-                        if (key == 'ArrowRight' && !paused) {
-                            self.onRightKeyPressed();
-                        }
-                    }
-                }
-            });
-            document.addEventListener('keyup', function (e) {
-                keysAllowed[e.key] = true;
-            });
+            // document.addEventListener('keydown', function (e) {
+            //     if (!gameOver) {
+            //         console.log('key pressed');
+            //         var key = e.key;
+            //         console.log(key);
+            //         if (keysAllowed[key] === false) return;
+            //         keysAllowed[key] = false;
+            //         // console.log(keysAllowed);
+            //         if (paused && key.toLowerCase() != 'p') {
+            //             paused = false;
+            //             self.onUnpause();
+            //             if (key == 'ArrowDown') {
+            //                 self.onDownKeyPressed();
+            //             } else if (key == 'ArrowLeft') {
+            //                 self.onLeftKeyPressed();
+            //             } else if (key == 'ArrowRight') {
+            //                 self.onRightKeyPressed();
+            //             }
+            //         } else {
+            //             if (key.toLowerCase() == 'p') {
+            //                 paused = true;
+            //                 self.onPause();
+            //             }
+            //             if (key == 'ArrowDown' && !paused) {
+            //                 self.onDownKeyPressed();
+            //             }
+            //             if (key == 'ArrowLeft' && !paused) {
+            //                 self.onLeftKeyPressed();
+            //             }
+            //             if (key == 'ArrowRight' && !paused) {
+            //                 self.onRightKeyPressed();
+            //             }
+            //         }
+            //     }
+            // });
+            // document.addEventListener('keyup', function (e) {
+            //     keysAllowed[e.key] = true;
+            // });
         }
 
         this.update = function () {

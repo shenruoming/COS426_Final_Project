@@ -35,6 +35,7 @@ class Biker extends Group {
         // };
 
         this.Character();
+        this.name = 'biker';
     }
 
     sinusoid(frequency, minimum, maximum, phase) {
@@ -257,7 +258,7 @@ class Biker extends Group {
             self.runningStartTime = new Date() / 1000;
 
             self.element.position.x = 0;
-            self.element.position.z = 8.4;
+            self.element.position.z = 7.4;
             self.element.position.y = 1.7;
 
             const scaleFactor = 0.004;
@@ -269,44 +270,44 @@ class Biker extends Group {
 
             // Start receiving feedback from the player.
             let keysAllowed = {};
-            document.addEventListener('keydown', function (e) {
-                if (!gameOver) {
-                    console.log('key pressed');
-                    var key = e.key;
-                    console.log(key);
-                    if (keysAllowed[key] === false) return;
-                    keysAllowed[key] = false;
-                    // console.log(keysAllowed);
-                    if (paused && key.toLowerCase() != 'p') {
-                        paused = false;
-                        self.onUnpause();
-                        if (key == 'ArrowUp') {
-                            self.onUpKeyPressed();
-                        } else if (key == 'ArrowLeft') {
-                            self.onLeftKeyPressed();
-                        } else if (key == 'ArrowRight') {
-                            self.onRightKeyPressed();
-                        }
-                    } else {
-                        if (key.toLowerCase() == 'p') {
-                            paused = true;
-                            self.onPause();
-                        }
-                        if (key == 'ArrowUp' && !paused) {
-                            self.onUpKeyPressed();
-                        }
-                        if (key == 'ArrowLeft' && !paused) {
-                            self.onLeftKeyPressed();
-                        }
-                        if (key == 'ArrowRight' && !paused) {
-                            self.onRightKeyPressed();
-                        }
-                    }
-                }
-            });
-            document.addEventListener('keyup', function (e) {
-                keysAllowed[e.key] = true;
-            });
+            // document.addEventListener('keydown', function (e) {
+            //     if (!gameOver) {
+            //         console.log('key pressed');
+            //         var key = e.key;
+            //         console.log(key);
+            //         if (keysAllowed[key] === false) return;
+            //         keysAllowed[key] = false;
+            //         // console.log(keysAllowed);
+            //         if (paused && key.toLowerCase() != 'p') {
+            //             paused = false;
+            //             self.onUnpause();
+            //             if (key == 'ArrowUp') {
+            //                 self.onUpKeyPressed();
+            //             } else if (key == 'ArrowLeft') {
+            //                 self.onLeftKeyPressed();
+            //             } else if (key == 'ArrowRight') {
+            //                 self.onRightKeyPressed();
+            //             }
+            //         } else {
+            //             if (key.toLowerCase() == 'p') {
+            //                 paused = true;
+            //                 self.onPause();
+            //             }
+            //             if (key == 'ArrowUp' && !paused) {
+            //                 self.onUpKeyPressed();
+            //             }
+            //             if (key == 'ArrowLeft' && !paused) {
+            //                 self.onLeftKeyPressed();
+            //             }
+            //             if (key == 'ArrowRight' && !paused) {
+            //                 self.onRightKeyPressed();
+            //             }
+            //         }
+            //     }
+            // });
+            // document.addEventListener('keyup', function (e) {
+            //     keysAllowed[e.key] = true;
+            // });
         }
 
         this.update = function () {

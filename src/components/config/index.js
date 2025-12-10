@@ -1,5 +1,5 @@
-export const CAMERA_Z_POS = 30;
-export const CAMERA_Y_POS = 15;
+export const CAMERA_Z_POS = 25;
+export const CAMERA_Y_POS = 10;
 export const CAMERA_OFFSET = 15;
 export const PATH_LENGTH = 1000;
 

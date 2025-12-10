@@ -9,6 +9,7 @@ import {
 } from 'three';
 import { TWEEN } from 'three/examples/jsm/libs/tween.module.min.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { Bicycle } from 'objects';
 
 const Colors = {
     cherry: 0xe35d6a,
@@ -24,7 +25,7 @@ const Colors = {
 };
 const deg2Rad = Math.PI / 180;
 
-class Swimmer extends Group {
+class Biker extends Group {
     constructor(parent) {
         super();
 
@@ -51,15 +52,17 @@ class Swimmer extends Group {
     Character() {
         // Explicit binding of this even in changing contexts.
         var self = this;
+        const bike = new Bicycle();
+        this.add(bike);
 
         // Character defaults.
         this.skinColor = Colors.peach;
         this.hairColor = Colors.brown;
-        this.shirtColor = Colors.blue;
-        this.shortsColor = Colors.blue;
-        this.stepFreq = 1.5;
-        this.diveHeight = -2; // controls how high the character jumps
-        this.jumpDuration = 0.7; // Controls how long the jump lasts (in seconds)
+        this.shirtColor = Colors.purple;
+        this.shortsColor = Colors.lightblue;
+        this.stepFreq = 2;
+        this.jumpHeight = 5; // controls how high the character jumps
+        this.jumpDuration = 0.5; // Controls how long the jump lasts (in seconds)
 
         // Initialize the character.
         init();
@@ -168,6 +171,8 @@ class Swimmer extends Group {
                 190,
                 -10
             );
+            // note to self: 20 is arm bending rotation angle
+            self.leftArm.rotation.x = 20 * deg2Rad;
             self.leftArm.add(self.leftLowerArm);
 
             self.rightLowerArm = self.createLimb(
@@ -188,6 +193,7 @@ class Swimmer extends Group {
                 190,
                 -10
             );
+            self.rightArm.rotation.x = 20 * deg2Rad;
             self.rightArm.add(self.rightLowerArm);
 
             self.leftLowerLeg = self.createLimb(
@@ -196,18 +202,20 @@ class Swimmer extends Group {
                 40,
                 self.skinColor,
                 0,
-                -100,
+                -200,
                 0
             );
             self.leftLeg = self.createLimb(
                 50,
-                170,
+                120,
                 50,
                 self.shortsColor,
                 -50,
                 -10,
-                30
+                0
             );
+            // note to self: -60 is leg bending angle
+            self.leftLowerLeg.rotation.x = -60 * deg2Rad;
             self.leftLeg.add(self.leftLowerLeg);
 
             self.rightLowerLeg = self.createLimb(
@@ -216,18 +224,19 @@ class Swimmer extends Group {
                 40,
                 self.skinColor,
                 0,
-                -100,
+                -200,
                 0
             );
             self.rightLeg = self.createLimb(
                 50,
-                80,
+                120,
                 50,
                 self.shortsColor,
                 50,
                 -10,
-                30
+                0
             );
+            self.rightLowerLeg.rotation.x = 60 * deg2Rad;
             self.rightLeg.add(self.rightLowerLeg);
 
             self.element = self.createGroup(0, 0, -300);
@@ -238,23 +247,22 @@ class Swimmer extends Group {
             self.element.add(self.leftLeg);
             self.element.add(self.rightLeg);
 
-            self.isDiving = false;
+            self.isJumping = false;
             self.isSwitchingLeft = false;
             self.isSwitchingRight = false;
-            self.currentLane = 0;
+            bike.isSwitchingLeft = false;
+            bike.isSwitchingRight = false;
             self.queuedActions = [];
+            bike.queuedActions = [];
             self.runningStartTime = new Date() / 1000;
 
             self.element.position.x = 0;
-            self.element.position.z = 1;
-            self.element.position.y = -7;
+            self.element.position.z = 8.4;
+            self.element.position.y = 1.7;
 
             const scaleFactor = 0.004;
             self.element.scale.set(scaleFactor, scaleFactor, scaleFactor);
             self.add(self.element);
-
-            // rotate her so that she looks like she's actually swimming
-            self.rotateX(-Math.PI / 2);
 
             var gameOver = false;
             var paused = true;
@@ -272,8 +280,8 @@ class Swimmer extends Group {
                     if (paused && key.toLowerCase() != 'p') {
                         paused = false;
                         self.onUnpause();
-                        if (key == 'ArrowDown') {
-                            self.onDownKeyPressed();
+                        if (key == 'ArrowUp') {
+                            self.onUpKeyPressed();
                         } else if (key == 'ArrowLeft') {
                             self.onLeftKeyPressed();
                         } else if (key == 'ArrowRight') {
@@ -284,8 +292,8 @@ class Swimmer extends Group {
                             paused = true;
                             self.onPause();
                         }
-                        if (key == 'ArrowDown' && !paused) {
-                            self.onDownKeyPressed();
+                        if (key == 'ArrowUp' && !paused) {
+                            self.onUpKeyPressed();
                         }
                         if (key == 'ArrowLeft' && !paused) {
                             self.onLeftKeyPressed();
@@ -307,121 +315,89 @@ class Swimmer extends Group {
             // Apply actions to the character if none are currently being
             // carried out.
             if (
-                !self.isDiving &&
+                !self.isJumping &&
                 !self.isSwitchingLeft &&
                 !self.isSwitchingRight &&
                 self.queuedActions.length > 0
             ) {
                 switch (self.queuedActions.shift()) {
-                    case 'ArrowDown':
-                        self.isDiving = true;
-                        self.diveStartTime = new Date() / 1000;
+                    case 'ArrowUp':
+                        self.isJumping = true;
+                        self.jumpStartTime = new Date() / 1000;
                         break;
                     case 'ArrowLeft':
                         self.isSwitchingLeft = true;
+                        bike.isSwitchingLeft = true;
                         break;
                     case 'ArrowRight':
                         self.isSwitchingRight = true;
+                        bike.isSwitchingRight = true;
                         break;
                 }
             }
 
             // If the character is jumping, update the height of the character.
             // Otherwise, the character continues running.
-            if (self.isDiving) {
-                var jumpClock = currentTime - self.diveStartTime;
-                self.element.position.z =
-                    self.diveHeight *
-                    Math.sin((1 / self.jumpDuration) * jumpClock);
-
-                // straight arms
-                self.leftArm.rotation.x = -180 * deg2Rad;
-                self.rightArm.rotation.x = -180 * deg2Rad;
-                self.leftLowerArm.rotation.x = 0;
-                self.rightLowerArm.rotation.x = 0;
-
-                self.leftLeg.rotation.x = 0;
-                self.rightLeg.rotation.x = 0;
-
+            if (self.isJumping) {
+                var jumpClock = currentTime - self.jumpStartTime;
+                self.element.position.y =
+                    self.jumpHeight *
+                    Math.sin((1 / self.jumpDuration) * Math.PI * jumpClock);
                 if (jumpClock > self.jumpDuration) {
-                    self.isDiving = false;
+                    self.isJumping = false;
                     self.runningStartTime += self.jumpDuration;
                     // back to the OG position
-                    self.element.position.z = 1;
+                    self.element.position.y = 1.7;
                 }
             } else {
                 var runningClock = currentTime - self.runningStartTime;
-                var swimFreq = 1.0;
+                var pedalFreq = 1.5;
 
-                // body rotation
-                // side to side breathing
-                self.element.rotation.y =
-                    self.sinusoid(
-                        swimFreq / 2, // Half the frequency of the arms
-                        -5,
-                        5,
-                        90,
-                        runningClock
-                    ) * deg2Rad;
-
-                // head rotation
-                self.head.rotation.z =
-                    self.sinusoid(swimFreq, -5, 5, 0, runningClock) * deg2Rad;
-
-                // torso rotation
+                // slight bob
+                self.head.rotation.x =
+                    self.sinusoid(2 * pedalFreq, -3, 3, 0, runningClock) *
+                    deg2Rad;
                 self.torso.rotation.x =
-                    self.sinusoid(swimFreq, -3, 3, 0, runningClock) * deg2Rad;
-
-                // FREESTYLE STROKE
-                // left arm
-                self.leftArm.rotation.x =
-                    self.sinusoid(swimFreq, -160, 160, 180, runningClock) * // 180 deg phase shift (opposite the right arm)
+                    self.sinusoid(2 * pedalFreq, -3, 3, 180, runningClock) *
                     deg2Rad;
 
-                // right arm
-                self.rightArm.rotation.x =
-                    self.sinusoid(swimFreq, -160, 160, 0, runningClock) * // No phase shift
-                    deg2Rad;
+                // arms fixed to handlebars
+                self.leftArm.rotation.x = 20 * deg2Rad;
+                self.rightArm.rotation.x = 20 * deg2Rad;
+                self.leftLowerArm.rotation.x = 20;
+                self.rightLowerArm.rotation.x = 20;
 
-                // loewr arms (less movement here)
-                self.leftLowerArm.rotation.x = 0;
-                self.rightLowerArm.rotation.x = 0;
-
-                // kicking (flutter kicking) -> down n up
-                var kickFreq = 3;
-
-                // left leg
-                self.leftLeg.rotation.x =
-                    self.sinusoid(kickFreq, -20, 20, 0, runningClock) * deg2Rad;
-
-                // right leg
-                self.rightLeg.rotation.x =
-                    self.sinusoid(kickFreq, -20, 20, 180, runningClock) *
-                    deg2Rad;
-
+                // legs in pedal motion
+                self.leftLeg.rotation.x = 40 * deg2Rad;
+                self.rightLeg.rotation.x = 40 * deg2Rad;
                 self.leftLowerLeg.rotation.x =
-                    self.sinusoid(kickFreq, -10, 30, 0, runningClock) * deg2Rad;
-
-                self.rightLowerLeg.rotation.x =
-                    self.sinusoid(kickFreq, -10, 30, 180, runningClock) *
+                    self.sinusoid(pedalFreq, 0, -70, 180, runningClock) *
                     deg2Rad;
+                self.rightLowerLeg.rotation.x =
+                    self.sinusoid(pedalFreq, 0, -70, 0, runningClock) * deg2Rad;
 
                 // If the character is not jumping, it may be switching lanes.
                 if (self.isSwitchingLeft) {
                     if (self.element.position.x <= -2.3) {
                         self.element.position.x = -2.3;
+                        bike.position.x = -2.3;
                     } else {
                         self.element.position.x -= 2.3;
+                        bike.position.x -= 2.3;
                     }
                     self.isSwitchingLeft = false;
+                    bike.isSwitchingLeft = false;
                 }
                 if (self.isSwitchingRight) {
                     if (self.element.position.x >= 2.3) {
                         self.element.position.x = 2.3;
+                        bike.position.x = 2.3;
                     } else {
                         self.element.position.x += 2.3;
+                        bike.position.x += 2.3;
                     }
                     self.isSwitchingRight = false;
+                    bike.isSwitchingRight = false;
                 }
             }
         };
@@ -431,13 +407,15 @@ class Swimmer extends Group {
          */
         this.onLeftKeyPressed = function () {
             self.queuedActions.push('ArrowLeft');
+            // bike.queuedActions.push('ArrowLeft');
         };
 
         /**
          * Handles character activity when the up key is pressed.
          */
-        this.onDownKeyPressed = function () {
-            self.queuedActions.push('ArrowDown');
+        this.onUpKeyPressed = function () {
+            self.queuedActions.push('ArrowUp');
+            // bike.queuedActions.push('ArrowUp');
         };
 
         /**
@@ -445,6 +423,7 @@ class Swimmer extends Group {
          */
         this.onRightKeyPressed = function () {
             self.queuedActions.push('ArrowRight');
+            // bike.queuedActions.push('ArrowRight');
         };
 
         /**
@@ -461,8 +440,8 @@ class Swimmer extends Group {
             var currentTime = new Date() / 1000;
             var pauseDuration = currentTime - self.pauseStartTime;
             self.runningStartTime += pauseDuration;
-            if (self.isDiving) {
-                self.diveStartTime += pauseDuration;
+            if (self.isJumping) {
+                self.jumpStartTime += pauseDuration;
             }
         };
     }
@@ -525,6 +504,35 @@ class Swimmer extends Group {
         this.position.y = 1.4;
         this.collected = false;
     }
+
+    // onCollision() {
+    //     if (!this.collected) {
+    //         this.collected = true;
+    //         const spin = new TWEEN.Tween(this.rotation).to(
+    //             { y: this.rotation.y + 2 * Math.PI },
+    //             200
+    //         );
+    //         const jumpUp = new TWEEN.Tween(this.position)
+    //             .to({ y: this.position.y + 2 }, 200)
+    //             .easing(TWEEN.Easing.Quadratic.Out);
+    //         const fallDown = new TWEEN.Tween(this.position)
+    //             .to({ y: -1 }, 300)
+    //             .easing(TWEEN.Easing.Quadratic.In);
+    //         const resetPos = new TWEEN.Tween(this.position).to(
+    //             { z: -(this.parent.fog.far + 50 * Math.random()) },
+    //             100
+    //         );
+
+    //         // Reset position after jumping up and down
+    //         jumpUp.onComplete(() => fallDown.start());
+    //         fallDown.onComplete(() => resetPos.start());
+    //         resetPos.onComplete(() => this.resetParams());
+
+    //         // Start animation
+    //         jumpUp.start();
+    //         spin.start();
+    //     }
+    // }
 }
 
-export default Swimmer;
+export default Biker;

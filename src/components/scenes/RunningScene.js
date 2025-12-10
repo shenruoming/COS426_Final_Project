@@ -7,6 +7,7 @@ import {
     Spectator,
     Runner,
     Swimmer,
+    Biker,
     TerrainController,
     BikingPath,
     Ocean,
@@ -54,11 +55,6 @@ class RunningScene extends Scene {
         const ocean = new Ocean(this);
         this.add(swimmingPath, ocean);
 
-        const swimmer = new Swimmer();
-        swimmer.position.x;
-        this.addToUpdateList(swimmer);
-        this.add(swimmer);
-
         const bikingPath = new BikingPath(this);
         const mountains = new Mountains(this);
         this.add(bikingPath, mountains);
@@ -66,6 +62,14 @@ class RunningScene extends Scene {
         // const runner = new Runner();
         // this.addToUpdateList(runner);
         // this.add(runner);
+
+        // const swimmer = new Swimmer();
+        // this.addToUpdateList(swimmer);
+        // this.add(swimmer);
+
+        const biker = new Biker();
+        this.addToUpdateList(biker);
+        this.add(biker);
 
         // for debugging
         const axesHelper = new AxesHelper(5);

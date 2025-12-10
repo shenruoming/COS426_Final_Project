@@ -1,6 +1,17 @@
 import * as Dat from 'dat.gui';
 import { Scene, Color, AxesHelper } from 'three';
-import { RunningPath, SwimmingPath, Grass, Spectator, Runner, TerrainController, BikingPath, Ocean, Mountains } from 'objects';
+import {
+    RunningPath,
+    SwimmingPath,
+    Grass,
+    Spectator,
+    Runner,
+    Swimmer,
+    TerrainController,
+    BikingPath,
+    Ocean,
+    Mountains,
+} from 'objects';
 import { BasicLights } from 'lights';
 import { TerrainPhase } from '../config';
 
@@ -39,11 +50,11 @@ class RunningScene extends Scene {
         // Add ground to scene: running
         const runningPath = new RunningPath(this);
         const grass = new Grass(this);
-        this.add(runningPath, grass)
+        this.add(runningPath, grass);
 
         // add spectators to scene
         for (let i = 0; i < 5; i++) {
-            const spectator = new Spectator(this, -6, 10 * (i+1) - 30);
+            const spectator = new Spectator(this, -6, 10 * (i + 1) - 30);
             this.add(spectator);
         }
 
@@ -52,15 +63,18 @@ class RunningScene extends Scene {
         const ocean = new Ocean(this);
         this.add(swimmingPath, ocean);
 
-        // add biking to scene
+        const swimmer = new Swimmer();
+        swimmer.position.x;
+        this.addToUpdateList(swimmer);
+        this.add(swimmer);
+
         const bikingPath = new BikingPath(this);
         const mountains = new Mountains(this);
         this.add(bikingPath, mountains);
 
         // for debugging
-        const axesHelper = new AxesHelper( 5 );
-        this.add( axesHelper );
-
+        const axesHelper = new AxesHelper(5);
+        this.add(axesHelper);
     }
 
     addToUpdateList(object) {

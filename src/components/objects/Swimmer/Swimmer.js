@@ -24,7 +24,7 @@ const Colors = {
 };
 const deg2Rad = Math.PI / 180;
 
-class Runner extends Group {
+class Swimmer extends Group {
     constructor(parent) {
         super();
 
@@ -34,7 +34,6 @@ class Runner extends Group {
         // };
 
         this.Character();
-        this.name = 'runner';
     }
 
     sinusoid(frequency, minimum, maximum, phase) {
@@ -56,11 +55,11 @@ class Runner extends Group {
         // Character defaults.
         this.skinColor = Colors.peach;
         this.hairColor = Colors.brown;
-        this.shirtColor = Colors.purple;
-        this.shortsColor = Colors.lightblue;
-        this.stepFreq = 2;
-        this.jumpHeight = 5; // controls how high the character jumps
-        this.jumpDuration = 0.5; // Controls how long the jump lasts (in seconds)
+        this.shirtColor = Colors.blue;
+        this.shortsColor = Colors.blue;
+        this.stepFreq = 1.5;
+        this.diveHeight = -2; // controls how high the character jumps
+        this.jumpDuration = 0.7; // Controls how long the jump lasts (in seconds)
 
         // Initialize the character.
         init();
@@ -197,12 +196,12 @@ class Runner extends Group {
                 40,
                 self.skinColor,
                 0,
-                -200,
+                -100,
                 0
             );
             self.leftLeg = self.createLimb(
                 50,
-                170,
+                80,
                 50,
                 self.shortsColor,
                 -50,
@@ -217,12 +216,12 @@ class Runner extends Group {
                 40,
                 self.skinColor,
                 0,
-                -200,
+                -100,
                 0
             );
             self.rightLeg = self.createLimb(
                 50,
-                170,
+                80,
                 50,
                 self.shortsColor,
                 50,
@@ -239,7 +238,7 @@ class Runner extends Group {
             self.element.add(self.leftLeg);
             self.element.add(self.rightLeg);
 
-            self.isJumping = false;
+            self.isDiving = false;
             self.isSwitchingLeft = false;
             self.isSwitchingRight = false;
             self.currentLane = 0;
@@ -247,54 +246,59 @@ class Runner extends Group {
             self.runningStartTime = new Date() / 1000;
 
             self.element.position.x = 0;
-            self.element.position.z = 5;
-            self.element.position.y = 1.2;
+            self.element.position.z = 1;
+            self.element.position.y = -7;
 
             const scaleFactor = 0.004;
             self.element.scale.set(scaleFactor, scaleFactor, scaleFactor);
             self.add(self.element);
 
+            // rotate her so that she looks like she's actually swimming
+            self.rotateX(-Math.PI / 2);
+
+            var gameOver = false;
+            var paused = true;
+
             // Start receiving feedback from the player.
             let keysAllowed = {};
-            // document.addEventListener('keydown', function (e) {
-            //     console.log(keysAllowed);
-            //     if (!gameOver) {
-            //         console.log('key pressed');
-            //         var key = e.key;
-            //         console.log(key);
-            //         if (keysAllowed[key] === false) return;
-            //         keysAllowed[key] = false;
-            //         console.log(keysAllowed);
-            //         if (paused && key.toLowerCase() != 'p') {
-            //             paused = false;
-            //             self.onUnpause();
-            //             if (key == 'ArrowUp') {
-            //                 self.onUpKeyPressed();
-            //             } else if (key == 'ArrowLeft') {
-            //                 self.onLeftKeyPressed();
-            //             } else if (key == 'ArrowRight') {
-            //                 self.onRightKeyPressed();
-            //             }
-            //         } else {
-            //             if (key.toLowerCase() == 'p') {
-            //                 paused = true;
-            //                 self.onPause();
-            //             }
-            //             if (key == 'ArrowUp' && !paused) {
-            //                 self.onUpKeyPressed();
-            //             }
-            //             if (key == 'ArrowLeft' && !paused) {
-            //                 self.onLeftKeyPressed();
-            //             }
-            //             if (key == 'ArrowRight' && !paused) {
-            //                 self.onRightKeyPressed();
-            //             }
-            //         }
-                // }
-            // });
-            // document.addEventListener('keyup', function (e) {
-            //     keysAllowed[e.key] = true;
-            // });
+            document.addEventListener('keydown', function (e) {
+                if (!gameOver) {
+                    console.log('key pressed');
+                    var key = e.key;
+                    console.log(key);
+                    if (keysAllowed[key] === false) return;
+                    keysAllowed[key] = false;
+                    // console.log(keysAllowed);
+                    if (paused && key.toLowerCase() != 'p') {
+                        paused = false;
+                        self.onUnpause();
+                        if (key == 'ArrowDown') {
+                            self.onDownKeyPressed();
+                        } else if (key == 'ArrowLeft') {
+                            self.onLeftKeyPressed();
+                        } else if (key == 'ArrowRight') {
+                            self.onRightKeyPressed();
+                        }
+                    } else {
+                        if (key.toLowerCase() == 'p') {
+                            paused = true;
+                            self.onPause();
+                        }
+                        if (key == 'ArrowDown' && !paused) {
+                            self.onDownKeyPressed();
+                        }
+                        if (key == 'ArrowLeft' && !paused) {
+                            self.onLeftKeyPressed();
+                        }
+                        if (key == 'ArrowRight' && !paused) {
+                            self.onRightKeyPressed();
+                        }
+                    }
+                }
+            });
+            document.addEventListener('keyup', function (e) {
+                keysAllowed[e.key] = true;
+            });
         }
 
         this.update = function () {
@@ -303,15 +307,15 @@ class Runner extends Group {
             // Apply actions to the character if none are currently being
             // carried out.
             if (
-                !self.isJumping &&
+                !self.isDiving &&
                 !self.isSwitchingLeft &&
                 !self.isSwitchingRight &&
                 self.queuedActions.length > 0
             ) {
                 switch (self.queuedActions.shift()) {
-                    case 'ArrowUp':
-                        self.isJumping = true;
-                        self.jumpStartTime = new Date() / 1000;
+                    case 'ArrowDown':
+                        self.isDiving = true;
+                        self.diveStartTime = new Date() / 1000;
                         break;
                     case 'ArrowLeft':
                         self.isSwitchingLeft = true;
@@ -324,60 +328,82 @@ class Runner extends Group {
 
             // If the character is jumping, update the height of the character.
             // Otherwise, the character continues running.
-            if (self.isJumping) {
-                var jumpClock = currentTime - self.jumpStartTime;
-                self.element.position.y =
-                    self.jumpHeight *
-                    Math.sin((1 / self.jumpDuration) * Math.PI * jumpClock);
+            if (self.isDiving) {
+                var jumpClock = currentTime - self.diveStartTime;
+                self.element.position.z =
+                    self.diveHeight *
+                    Math.sin((1 / self.jumpDuration) * jumpClock);
+
+                // straight arms
+                self.leftArm.rotation.x = -180 * deg2Rad;
+                self.rightArm.rotation.x = -180 * deg2Rad;
+                self.leftLowerArm.rotation.x = 0;
+                self.rightLowerArm.rotation.x = 0;
+
+                self.leftLeg.rotation.x = 0;
+                self.rightLeg.rotation.x = 0;
+
                 if (jumpClock > self.jumpDuration) {
-                    self.isJumping = false;
+                    self.isDiving = false;
                     self.runningStartTime += self.jumpDuration;
                     // back to the OG position
-                    self.element.position.y = 1.2;
+                    self.element.position.z = 1;
                 }
-            } else if (!self.parent.state.paused) {
+            } else {
                 var runningClock = currentTime - self.runningStartTime;
-                // self.element.position.y = self.sinusoid(
-                //     2 * self.stepFreq,
-                //     0,
-                //     20,
-                //     0,
-                //     runningClock
-                // );
-                self.head.rotation.x =
-                    self.sinusoid(2 * self.stepFreq, -10, -5, 0, runningClock) *
-                    deg2Rad;
-                self.torso.rotation.x =
+                var swimFreq = 1.0;
+
+                // body rotation
+                // side to side breathing
+                self.element.rotation.y =
                     self.sinusoid(
-                        2 * self.stepFreq,
-                        -10,
+                        swimFreq / 2, // Half the frequency of the arms
                         -5,
-                        180,
+                        5,
+                        90,
                         runningClock
                     ) * deg2Rad;
+
+                // head rotation
+                self.head.rotation.z =
+                    self.sinusoid(swimFreq, -5, 5, 0, runningClock) * deg2Rad;
+
+                // torso rotation
+                self.torso.rotation.x =
+                    self.sinusoid(swimFreq, -3, 3, 0, runningClock) * deg2Rad;
+
+                // FREESTYLE STROKE
+                // left arm
                 self.leftArm.rotation.x =
-                    self.sinusoid(self.stepFreq, -70, 50, 180, runningClock) *
+                    self.sinusoid(swimFreq, -160, 160, 180, runningClock) * // 180 deg phase shift (opposite the right arm)
                     deg2Rad;
+
+                // right arm
                 self.rightArm.rotation.x =
-                    self.sinusoid(self.stepFreq, -70, 50, 0, runningClock) *
+                    self.sinusoid(swimFreq, -160, 160, 0, runningClock) * // No phase shift
                     deg2Rad;
-                self.leftLowerArm.rotation.x =
-                    self.sinusoid(self.stepFreq, 70, 140, 180, runningClock) *
-                    deg2Rad;
-                self.rightLowerArm.rotation.x =
-                    self.sinusoid(self.stepFreq, 70, 140, 0, runningClock) *
-                    deg2Rad;
+
+                // loewr arms (less movement here)
+                self.leftLowerArm.rotation.x = 0;
+                self.rightLowerArm.rotation.x = 0;
+
+                // kicking (flutter kicking) -> down n up
+                var kickFreq = 3;
+
+                // left leg
                 self.leftLeg.rotation.x =
-                    self.sinusoid(self.stepFreq, -20, 80, 0, runningClock) *
-                    deg2Rad;
+                    self.sinusoid(kickFreq, -20, 20, 0, runningClock) * deg2Rad;
+
+                // right leg
                 self.rightLeg.rotation.x =
-                    self.sinusoid(self.stepFreq, -20, 80, 180, runningClock) *
+                    self.sinusoid(kickFreq, -20, 20, 180, runningClock) *
                     deg2Rad;
+
                 self.leftLowerLeg.rotation.x =
-                    self.sinusoid(self.stepFreq, -130, 5, 240, runningClock) *
-                    deg2Rad;
+                    self.sinusoid(kickFreq, -10, 30, 0, runningClock) * deg2Rad;
+
                 self.rightLowerLeg.rotation.x =
-                    self.sinusoid(self.stepFreq, -130, 5, 60, runningClock) *
+                    self.sinusoid(kickFreq, -10, 30, 180, runningClock) *
                     deg2Rad;
 
                 // If the character is not jumping, it may be switching lanes.
@@ -410,8 +436,8 @@ class Runner extends Group {
         /**
          * Handles character activity when the up key is pressed.
          */
-        this.onUpKeyPressed = function () {
-            self.queuedActions.push('ArrowUp');
+        this.onDownKeyPressed = function () {
+            self.queuedActions.push('ArrowDown');
         };
 
         /**
@@ -435,8 +461,8 @@ class Runner extends Group {
             var currentTime = new Date() / 1000;
             var pauseDuration = currentTime - self.pauseStartTime;
             self.runningStartTime += pauseDuration;
-            if (self.isJumping) {
-                self.jumpStartTime += pauseDuration;
+            if (self.isDiving) {
+                self.diveStartTime += pauseDuration;
             }
         };
     }
@@ -499,35 +525,6 @@ class Runner extends Group {
         this.position.y = 1.4;
         this.collected = false;
     }
-
-    // onCollision() {
-    //     if (!this.collected) {
-    //         this.collected = true;
-    //         const spin = new TWEEN.Tween(this.rotation).to(
-    //             { y: this.rotation.y + 2 * Math.PI },
-    //             200
-    //         );
-    //         const jumpUp = new TWEEN.Tween(this.position)
-    //             .to({ y: this.position.y + 2 }, 200)
-    //             .easing(TWEEN.Easing.Quadratic.Out);
-    //         const fallDown = new TWEEN.Tween(this.position)
-    //             .to({ y: -1 }, 300)
-    //             .easing(TWEEN.Easing.Quadratic.In);
-    //         const resetPos = new TWEEN.Tween(this.position).to(
-    //             { z: -(this.parent.fog.far + 50 * Math.random()) },
-    //             100
-    //         );
-
-    //         // Reset position after jumping up and down
-    //         jumpUp.onComplete(() => fallDown.start());
-    //         fallDown.onComplete(() => resetPos.start());
-    //         resetPos.onComplete(() => this.resetParams());
-
-    //         // Start animation
-    //         jumpUp.start();
-    //         spin.start();
-    //     }
-    // }
 }
 
-export default Runner;
+export default Swimmer;

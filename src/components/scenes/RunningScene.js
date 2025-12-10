@@ -1,17 +1,8 @@
 import * as Dat from 'dat.gui';
 import { Scene, Color, AxesHelper } from 'three';
-import {
-    RunningPath,
-    SwimmingPath,
-    Grass,
-    Spectator,
-    Runner,
-    Swimmer,
-    TerrainController,
-} from 'objects';
+import { RunningPath, SwimmingPath, Grass, Spectator, Runner, Swimmer, TerrainController, BikingPath, Ocean, Mountains } from 'objects';
 import { BasicLights } from 'lights';
 import { TerrainPhase } from '../config';
-import { BikingPath } from '../objects';
 
 class RunningScene extends Scene {
     constructor() {
@@ -49,16 +40,26 @@ class RunningScene extends Scene {
 
         // add water to scene: swimming
         const swimmingPath = new SwimmingPath(this);
-        this.add(swimmingPath);
+        const ocean = new Ocean(this);
+        this.add(swimmingPath, ocean);
 
         // add biking to scene
         const bikingPath = new BikingPath(this);
+<<<<<<< HEAD
         this.add(bikingPath);
 
         const swimmer = new Swimmer();
         swimmer.position.x;
         this.addToUpdateList(swimmer);
         this.add(swimmer);
+=======
+        const mountains = new Mountains(this);
+        this.add(bikingPath, mountains);
+
+        const runner = new Runner();
+        this.addToUpdateList(runner);
+        this.add(runner);
+>>>>>>> main
 
         // for debugging
         const axesHelper = new AxesHelper(5);

@@ -41,7 +41,6 @@ class BikingPath extends Group {
             return;
         }
         if (terrainPhase == TerrainPhase.SWIMMING && terrainController.numSwimLaps == 2) {
-            console.log("start bike moving");
             this.visible = true;
             this.state.moving = true;
         }

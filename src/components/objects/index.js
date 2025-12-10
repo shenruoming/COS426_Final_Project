@@ -8,3 +8,8 @@ export * from './Runner';
 export * from './Swimmer';
 export * from './TerrainController';
 export * from './BikingPath';
+export * from './Ocean';
+export * from './Mountains';
+export * from './Deer';
+export * from './Shark';
+export * from './Boulder';

@@ -1,4 +1,4 @@
-import { Group, SpotLight, AmbientLight, HemisphereLight } from 'three';
+import { Group, SpotLight, AmbientLight, HemisphereLight, DirectionalLight } from 'three';
 
 class BasicLights extends Group {
     constructor(...args) {
@@ -7,12 +7,28 @@ class BasicLights extends Group {
 
         const dir = new SpotLight(0xffffff, 1.6, 7, 0.8, 1, 1);
         const ambi = new AmbientLight(0x404040, 1.32);
-        const hemi = new HemisphereLight(0xffffbb, 0x080820, 2.3);
+        // const hemi = new HemisphereLight(0xffffbb, 0x080820, 2.3);
 
-        dir.position.set(5, 1, 2);
+        dir.position.set(50, 1, 2);
         dir.target.position.set(0, 0, 0);
+        this.add(ambi);
 
-        this.add(ambi, hemi, dir);
+        const shadowLight = new DirectionalLight(0xffffff, 0.8);
+
+        shadowLight.position.set(-150, 350, 350);
+
+        shadowLight.castShadow = true;
+
+        shadowLight.shadow.camera.left = -400;
+        shadowLight.shadow.camera.right = 400;
+        shadowLight.shadow.camera.top = 400;
+        shadowLight.shadow.camera.bottom = -400;
+        shadowLight.shadow.camera.near = 1;
+        shadowLight.shadow.camera.far = 1000;
+
+        shadowLight.shadow.mapSize.width = 2048;
+        shadowLight.shadow.mapSize.height = 2048;
+        this.add(shadowLight);
     }
 }
 

@@ -1,6 +1,6 @@
 import * as Dat from 'dat.gui';
 import { Scene, Color } from 'three';
-import { Flower, Land, Runner, Mountains } from 'objects';
+import { Flower, Land, Runner, Mountains, Deer, Shark, Boulder } from 'objects';
 import { BasicLights } from 'lights';
 
 class SeedScene extends Scene {
@@ -14,8 +14,8 @@ class SeedScene extends Scene {
             rotationSpeed: 0,
             updateList: [],
         };
-        const mountains = new Mountains(this);
-        this.add(mountains);
+        // const mountains = new Mountains(this);
+        // this.add(mountains);
 
         // Set background to a nice color
         this.background = new Color(0x7ec0ee);
@@ -25,6 +25,13 @@ class SeedScene extends Scene {
         // // const flower = new Flower(this);
         const lights = new BasicLights();
         this.add(lights)
+
+        // const deer = new Deer();
+        // this.add(deer);
+        // const shark = new Shark();
+        // this.add(shark);
+        const boulder = new Boulder();
+        this.add(boulder);
         // const runner = new Runner();
 
         // this.addToUpdateList(runner);

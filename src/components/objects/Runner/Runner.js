@@ -32,6 +32,7 @@ class Runner extends Group {
         // };
 
         this.Character();
+        this.name = 'runner';
     }
 
     sinusoid(frequency, minimum, maximum, phase) {
@@ -194,57 +195,54 @@ class Runner extends Group {
             self.runningStartTime = new Date() / 1000;
 
             self.element.position.x = 0;
-            self.element.position.z = 8;
+            self.element.position.z = 5;
             self.element.position.y = 1.2;
 
             const scaleFactor = 0.004;
             self.element.scale.set(scaleFactor, scaleFactor, scaleFactor);
             self.add(self.element);
 
-            var gameOver = false;
-            var paused = true;
-
             // Start receiving feedback from the player.
             let keysAllowed = {};
-            document.addEventListener('keydown', function (e) {
-                console.log(keysAllowed);
-                if (!gameOver) {
-                    console.log('key pressed');
-                    var key = e.key;
-                    console.log(key);
-                    if (keysAllowed[key] === false) return;
-                    keysAllowed[key] = false;
-                    console.log(keysAllowed);
-                    if (paused && key.toLowerCase() != 'p') {
-                        paused = false;
-                        self.onUnpause();
-                        if (key == 'ArrowUp') {
-                            self.onUpKeyPressed();
-                        } else if (key == 'ArrowLeft') {
-                            self.onLeftKeyPressed();
-                        } else if (key == 'ArrowRight') {
-                            self.onRightKeyPressed();
-                        }
-                    } else {
-                        if (key.toLowerCase() == 'p') {
-                            paused = true;
-                            self.onPause();
-                        }
-                        if (key == 'ArrowUp' && !paused) {
-                            self.onUpKeyPressed();
-                        }
-                        if (key == 'ArrowLeft' && !paused) {
-                            self.onLeftKeyPressed();
-                        }
-                        if (key == 'ArrowRight' && !paused) {
-                            self.onRightKeyPressed();
-                        }
-                    }
-                }
-            });
-            document.addEventListener('keyup', function (e) {
-                keysAllowed[e.key] = true;
-            });
+            // document.addEventListener('keydown', function (e) {
+            //     console.log(keysAllowed);
+            //     if (!gameOver) {
+            //         console.log('key pressed');
+            //         var key = e.key;
+            //         console.log(key);
+            //         if (keysAllowed[key] === false) return;
+            //         keysAllowed[key] = false;
+            //         console.log(keysAllowed);
+            //         if (paused && key.toLowerCase() != 'p') {
+            //             paused = false;
+            //             self.onUnpause();
+            //             if (key == 'ArrowUp') {
+            //                 self.onUpKeyPressed();
+            //             } else if (key == 'ArrowLeft') {
+            //                 self.onLeftKeyPressed();
+            //             } else if (key == 'ArrowRight') {
+            //                 self.onRightKeyPressed();
+            //             }
+            //         } else {
+            //             if (key.toLowerCase() == 'p') {
+            //                 paused = true;
+            //                 self.onPause();
+            //             }
+            //             if (key == 'ArrowUp' && !paused) {
+            //                 self.onUpKeyPressed();
+            //             }
+            //             if (key == 'ArrowLeft' && !paused) {
+            //                 self.onLeftKeyPressed();
+            //             }
+            //             if (key == 'ArrowRight' && !paused) {
+            //                 self.onRightKeyPressed();
+            //             }
+            //         }
+                // }
+            // });
+            // document.addEventListener('keyup', function (e) {
+            //     keysAllowed[e.key] = true;
+            // });
         }
 
         this.update = function () {
@@ -286,7 +284,7 @@ class Runner extends Group {
                     // back to the OG position
                     self.element.position.y = 1.2;
                 }
-            } else {
+            } else if (!self.parent.state.paused) {
                 var runningClock = currentTime - self.runningStartTime;
                 // self.element.position.y = self.sinusoid(
                 //     2 * self.stepFreq,

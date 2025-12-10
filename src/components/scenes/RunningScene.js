@@ -15,8 +15,12 @@ class RunningScene extends Scene {
             rotationSpeed: 1,
             updateList: [],
             terrainUpdateList: [],
-            gameSpeed: 0.5
+            gameSpeed: 0,
+            prevGameSpeed: 1,
+            paused: true
         };
+
+        this.gameOver = false;
 
         // Set background to a nice color
         this.background = new Color(0x7ec0ee);
@@ -26,6 +30,11 @@ class RunningScene extends Scene {
         this.add(lights);
 
         this.terrainController = new TerrainController();
+
+        // add player to scene: start with runner
+        const runner = new Runner();
+        this.addToUpdateList(runner);
+        this.add(runner);
 
         // Add ground to scene: running
         const runningPath = new RunningPath(this);
@@ -47,10 +56,6 @@ class RunningScene extends Scene {
         const bikingPath = new BikingPath(this);
         const mountains = new Mountains(this);
         this.add(bikingPath, mountains);
-
-        const runner = new Runner();
-        this.addToUpdateList(runner);
-        this.add(runner);
 
         // for debugging
         const axesHelper = new AxesHelper( 5 );
@@ -77,6 +82,17 @@ class RunningScene extends Scene {
         for (const obj of terrainUpdateList) {
             obj.update(timeStamp, this.terrainController);
         }
+    }
+
+    pause() {
+        this.state.paused = true;
+        this.state.prevGameSpeed = this.state.gameSpeed;
+        this.state.gameSpeed = 0;
+    }
+
+    unpause() {
+        this.state.paused = false;
+        this.state.gameSpeed = this.state.prevGameSpeed;
     }
 }
 

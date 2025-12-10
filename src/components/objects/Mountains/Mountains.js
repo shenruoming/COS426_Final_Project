@@ -19,11 +19,13 @@ class Mountains extends Group {
 
         const prng = alea('seed');
         this.noise2D = createNoise2D(prng);
-        const width = 20;
+        const width = 40;
         const data = this.generateTexture();
 
-        let geo = new THREE.PlaneGeometry(width, PATH_LENGTH,
-                                    width,PATH_LENGTH+1);
+        const length = PATH_LENGTH + 40;
+
+        let geo = new THREE.PlaneGeometry(width, length,
+                                    width,length+1);
         geo.rotateX( -Math.PI / 2 );
         let position = geo.attributes.position;
         let v1 = new THREE.Vector3();
@@ -46,7 +48,6 @@ class Mountains extends Group {
         position = geo.attributes.position;
         const colorsFloor = [];
         const color = new THREE.Color();
-        console.log(position.count)
 
         for ( let i = 0, l = position.count; i < l; i ++ ) {
             v1.fromBufferAttribute(position, i);
@@ -80,9 +81,9 @@ class Mountains extends Group {
         mesh.position.set(0, -2.5, 0);
         // mesh.receiveShadow = true;
         this.add( mesh );
-        this.position.z = -PATH_LENGTH - 45;
+        this.position.z = -PATH_LENGTH - 60;
         this.visible = false;
-        
+
         // Add self to parent's update list
         parent.addToTerrainUpdateList(this);
     }
@@ -125,11 +126,11 @@ class Mountains extends Group {
     //stack some noisefields together
     octave(nx,ny,octaves) {
         let val = 0;
-        let freq = 5;
+        let freq = 3;
         let max = 0;
         let amp = 5;
         for(let i=0; i<octaves; i++) {
-            val += this.noise(nx*freq,ny*freq)*amp;
+            val += this.noise(nx*freq*2,ny*freq)*amp;
             max += amp;
             amp /= 2;
             freq  *= 2;

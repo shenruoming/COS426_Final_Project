@@ -26,6 +26,8 @@ class RunningScene extends Scene {
         const lights = new BasicLights();
         this.add(lights);
 
+        this.terrainController = new TerrainController();
+
         // Add ground to scene: running
         const runningPath = new RunningPath(this);
         const grass = new Grass(this);
@@ -53,8 +55,6 @@ class RunningScene extends Scene {
         // for debugging
         const axesHelper = new AxesHelper( 5 );
         this.add( axesHelper );
-
-        this.terrainController = new TerrainController();
 
     }
 

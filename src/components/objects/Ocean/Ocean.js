@@ -1,20 +1,13 @@
-import { Group, BufferGeometry, Mesh, BoxBufferGeometry, MeshBasicMaterial, Box3 } from 'three';
+import { Group, Mesh, MeshBasicMaterial, Box3 } from 'three';
 import { PATH_LENGTH, TerrainPhase, CAMERA_OFFSET, CAMERA_Z_POS } from '../../config';
 import * as THREE from 'three';
 import { TerrainController } from '../TerrainController';
+import { BufferGeometryUtils } from 'three/examples/jsm/Addons.js';
 
-class Grass extends Group {
+class Ocean extends Group {
     constructor(parent) {
         // Call parent Group() constructor
         super();
-
-        // const geometry = new BoxBufferGeometry( 20, -1, PATH_LENGTH );
-        // const material = new MeshBasicMaterial( { color: 0x388004 } );
-        // const path = new Mesh( geometry, material );
-
-        // path.position.set(0, -0.5, 0);
-
-        // this.add(path);
 
         // Add self to parent's update list
         parent.addToTerrainUpdateList(this);
@@ -30,10 +23,11 @@ class Grass extends Group {
         const grassShades = [0x228B22, 0xAAFF00, 0x355E3B, 0x4CBB17];
 
 
-        // floor
+        // ocean
 
-		let geometry = new THREE.PlaneGeometry( 20, PATH_LENGTH, 100, 100 );
-		geometry.rotateX( - Math.PI / 2 );
+        let geometry = new THREE.PlaneGeometry( 20, PATH_LENGTH, 15, 15 );
+        geometry.rotateX( - Math.PI / 2 );
+        const mergedGeo = BufferGeometryUtils.mergeVertices(geometry);
 
         // vertex displacement
 
@@ -102,4 +96,4 @@ class Grass extends Group {
     }
 }
 
-export default Grass;
+export default Ocean;

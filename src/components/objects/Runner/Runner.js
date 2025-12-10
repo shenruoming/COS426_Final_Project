@@ -192,7 +192,7 @@ class Runner extends Group {
         this.update = function () {
             // self.element.rotation.y += 0.02;
             self.element.position.x = 0;
-            self.element.position.z = 6;
+            self.element.position.z = 8;
             self.element.position.y = 1.2;
             // self.element.position.y = self.sinusoid(
             //     2 * self.stepFreq,

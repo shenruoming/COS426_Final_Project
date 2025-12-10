@@ -7,3 +7,5 @@ export * from './SwimmingPath';
 export * from './Runner';
 export * from './TerrainController';
 export * from './BikingPath';
+export * from './Ocean';
+export * from './Mountains';

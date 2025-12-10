@@ -1,16 +1,20 @@
-import { Group } from 'three';
+import { Group, Box3 } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { TWEEN } from 'three/examples/jsm/libs/tween.module.min.js';
 import MODEL from './Deer.glb';
+import { CAMERA_Z_POS, CAMERA_OFFSET, TerrainPhase } from '../../config';
+import { getRandomObstacleX } from '../../utils/utils';
+import { TerrainController } from '../TerrainController';
 
 class Deer extends Group {
-    constructor(parent) {
+    constructor(parent, x, y, z) {
         // Call parent Group() constructor
         super();
 
         // Init state
         this.state = {
-
+            terrainController: parent.terrainController,
+            inScene: true
         };
 
         // Load object
@@ -21,26 +25,40 @@ class Deer extends Group {
             this.add(gltf.scene);
         });
 
-        const scaleFactor = 0.1;
+        const scaleFactor = 0.03;
         this.scale.set(scaleFactor, scaleFactor, scaleFactor);
+        this.position.set(x, y, z);
 
         // Add self to parent's update list
-        // parent.addToUpdateList(this);
+        parent.addToUpdateList(this);
     }
 
     update(timeStamp) {
-        if (this.state.bob) {
-            // Bob back and forth
-            this.rotation.z = 0.05 * Math.sin(timeStamp / 300);
+        let inScene = this.state.inScene;
+        if (this.state.terrainController.phase != TerrainPhase.RUNNING) {
+            if (inScene && this.position.z < -100) {
+                this.visible = false;
+                this.state.inScene = false;
+                this.position.y = -100;
+            }
+        } else {
+            if (!inScene) {
+                this.visible = true;
+                this.state.inScene = true;
+                this.position.y = 3;
+                this.position.z -= 250;
+            }
+            this.position.z += this.parent.state.gameSpeed * 0.8;
+            if (this.position.z > CAMERA_Z_POS + CAMERA_OFFSET) {
+                this.position.z -= 300;
+                this.position.x = getRandomObstacleX();
+            }
         }
-        if (this.state.twirl > 0) {
-            // Lazy implementation of twirl
-            this.state.twirl -= Math.PI / 8;
-            this.rotation.y += Math.PI / 8;
-        }
+    }
 
-        // Advance tween animations, if any exist
-        TWEEN.update();
+    collidesWith(otherBBox) {
+        const bbox = new Box3().setFromObject(this);
+        return bbox.intersectsBox(otherBBox);
     }
 }
 

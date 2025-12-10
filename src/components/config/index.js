@@ -11,3 +11,9 @@ export const TerrainPhase = {
     BIKING: 4,
     BIKING_END: 5
 }
+
+export const CharacterPhase = {
+    RUNNING: 0,
+    SWIMMING: 1,
+    BIKING: 2
+}

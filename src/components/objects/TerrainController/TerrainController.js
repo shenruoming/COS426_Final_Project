@@ -3,6 +3,7 @@ import { PATH_LENGTH, CAMERA_OFFSET, CAMERA_Z_POS, TerrainPhase } from '../../co
 class TerrainController {
     constructor() {
         this.phase = TerrainPhase.RUNNING;
+        this.characterPhase = TerrainPhase.RUNNING;
         this.startRunTime = new Date() / 1000;
         this.startSwimTime = -1;
         this.startBikeTime = -1;

@@ -13,7 +13,7 @@ class SwimmingPath extends Group {
         };
 
         const geometry = new BoxBufferGeometry( 8, 1, PATH_LENGTH );
-        const material = new MeshBasicMaterial( { color: 0x79a7b5 } );
+        const material = new MeshBasicMaterial( { color: 0x68c3c0 } );
         const path = new Mesh( geometry, material );
 
         path.position.set(0, -0.5, 0);
@@ -52,7 +52,13 @@ class SwimmingPath extends Group {
                 terrainController.numSwimLaps += 1;
             }
         }
-        return;
+        // attempt to change character
+        if (terrainPhase == TerrainPhase.SWIMMING && terrainController.characterPhase != TerrainPhase.SWIMMING) {
+            let bbox = new Box3().setFromObject(this.children[0]);
+            if (bbox.max.z >= 5) {
+                terrainController.characterPhase = TerrainPhase.SWIMMING;
+            }
+        }
     }
 }
 

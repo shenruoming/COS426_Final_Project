@@ -254,47 +254,6 @@ class Runner extends Group {
             self.element.scale.set(scaleFactor, scaleFactor, scaleFactor);
             self.add(self.element);
 
-            // Start receiving feedback from the player.
-            let keysAllowed = {};
-            // document.addEventListener('keydown', function (e) {
-            //     console.log(keysAllowed);
-            //     if (!gameOver) {
-            //         console.log('key pressed');
-            //         var key = e.key;
-            //         console.log(key);
-            //         if (keysAllowed[key] === false) return;
-            //         keysAllowed[key] = false;
-            //         console.log(keysAllowed);
-            //         if (paused && key.toLowerCase() != 'p') {
-            //             paused = false;
-            //             self.onUnpause();
-            //             if (key == 'ArrowUp') {
-            //                 self.onUpKeyPressed();
-            //             } else if (key == 'ArrowLeft') {
-            //                 self.onLeftKeyPressed();
-            //             } else if (key == 'ArrowRight') {
-            //                 self.onRightKeyPressed();
-            //             }
-            //         } else {
-            //             if (key.toLowerCase() == 'p') {
-            //                 paused = true;
-            //                 self.onPause();
-            //             }
-            //             if (key == 'ArrowUp' && !paused) {
-            //                 self.onUpKeyPressed();
-            //             }
-            //             if (key == 'ArrowLeft' && !paused) {
-            //                 self.onLeftKeyPressed();
-            //             }
-            //             if (key == 'ArrowRight' && !paused) {
-            //                 self.onRightKeyPressed();
-            //             }
-            //         }
-                // }
-            // });
-            // document.addEventListener('keyup', function (e) {
-            //     keysAllowed[e.key] = true;
-            // });
         }
 
         this.update = function () {

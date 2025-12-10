@@ -55,6 +55,13 @@ class RunningPath extends Group {
                 terrainController.numRunLaps += 1;
             }
         }
+        // attempt to change character
+        if (terrainPhase == TerrainPhase.RUNNING && terrainController.characterPhase != TerrainPhase.RUNNING) {
+            let bbox = new Box3().setFromObject(this.children[0]);
+            if (bbox.max.z >= 5) {
+                terrainController.characterPhase = TerrainPhase.RUNNING;
+            }
+        }
     }
 }
 

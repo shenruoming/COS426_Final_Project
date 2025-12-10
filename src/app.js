@@ -43,6 +43,10 @@ const onAnimationFrameHandler = (timeStamp) => {
     // controls.update();
     renderer.render(scene, camera);
     scene.update && scene.update(timeStamp);
+    const firstCollision = scene.getObstacleCollision();
+    if (firstCollision != null) {
+            console.log(firstCollision);
+    }
     window.requestAnimationFrame(onAnimationFrameHandler);
 };
 window.requestAnimationFrame(onAnimationFrameHandler);
@@ -60,7 +64,8 @@ window.addEventListener('resize', windowResizeHandler, false);
 // Add event listeners
 window.addEventListener('keydown', function (e) {
     const key = e.key;
-    const player = scene.getObjectByName('runner');
+    const player = scene.currentCharacter;
+    // const player = scene.getObjectByName('runner');
     const paused = scene.state.paused;
     if (key.toLowerCase() == 'p') {
         if (paused) {

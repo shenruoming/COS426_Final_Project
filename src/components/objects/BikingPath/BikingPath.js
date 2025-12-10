@@ -51,7 +51,13 @@ class BikingPath extends Group {
                 terrainController.numBikeLaps += 1;
             }
         }
-        return;
+        // attempt to change character
+        if (terrainPhase == TerrainPhase.BIKING && terrainController.characterPhase != TerrainPhase.BIKING) {
+            let bbox = new Box3().setFromObject(this.children[0]);
+            if (bbox.max.z >= 5) {
+                terrainController.characterPhase = TerrainPhase.BIKING;
+            }
+        }
     }
 }
 

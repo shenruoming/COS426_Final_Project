@@ -5,5 +5,6 @@ export * from './Grass';
 export * from './Spectator';
 export * from './SwimmingPath';
 export * from './Runner';
+export * from './Swimmer';
 export * from './TerrainController';
 export * from './BikingPath';

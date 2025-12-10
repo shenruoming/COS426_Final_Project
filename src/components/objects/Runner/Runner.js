@@ -16,9 +16,11 @@ const Colors = {
     white: 0xd8d0d1,
     black: 0x000000,
     brown: 0x59332e,
-    peach: 0xffdab9,
+    peach: 0xedba9d,
     yellow: 0xffff00,
     olive: 0x556b2f,
+    purple: 0xaf69ee,
+    lightblue: 0x6693f5,
 };
 const deg2Rad = Math.PI / 180;
 
@@ -51,10 +53,10 @@ class Runner extends Group {
         var self = this;
 
         // Character defaults.
-        this.skinColor = Colors.brown;
-        this.hairColor = Colors.black;
-        this.shirtColor = Colors.yellow;
-        this.shortsColor = Colors.olive;
+        this.skinColor = Colors.peach;
+        this.hairColor = Colors.brown;
+        this.shirtColor = Colors.purple;
+        this.shortsColor = Colors.lightblue;
         this.stepFreq = 2;
         this.jumpHeight = 5; // controls how high the character jumps
         this.jumpDuration = 0.5; // Controls how long the jump lasts (in seconds)
@@ -87,6 +89,56 @@ class Runner extends Group {
             self.head = self.createGroup(0, 260, -25);
             self.head.add(self.face);
             self.head.add(self.hair);
+
+            // pigtail stuff
+            self.rightPigtail1 = self.createCylinder(
+                15,
+                15 * 0.8,
+                40,
+                8,
+                self.hairColor,
+                70,
+                50,
+                0
+            );
+
+            self.rightPigtail2 = self.createCylinder(
+                15 * 0.8,
+                5 * 0.8,
+                40 * 1.5,
+                8,
+                self.hairColor,
+                70,
+                50 - 50,
+                0
+            );
+
+            self.leftPigtail1 = self.createCylinder(
+                15,
+                15 * 0.8,
+                40,
+                8,
+                self.hairColor,
+                -70,
+                50,
+                0
+            );
+
+            self.leftPigtail2 = self.createCylinder(
+                15 * 0.8,
+                5 * 0.8,
+                40 * 1.5,
+                8,
+                self.hairColor,
+                -70,
+                50 - 50,
+                0
+            );
+
+            self.head.add(self.rightPigtail1);
+            self.head.add(self.rightPigtail2);
+            self.head.add(self.leftPigtail1);
+            self.head.add(self.leftPigtail2);
 
             self.torso = self.createBox(
                 150,
@@ -207,14 +259,13 @@ class Runner extends Group {
             // Start receiving feedback from the player.
             let keysAllowed = {};
             document.addEventListener('keydown', function (e) {
-                console.log(keysAllowed);
                 if (!gameOver) {
                     console.log('key pressed');
                     var key = e.key;
                     console.log(key);
                     if (keysAllowed[key] === false) return;
                     keysAllowed[key] = false;
-                    console.log(keysAllowed);
+                    // console.log(keysAllowed);
                     if (paused && key.toLowerCase() != 'p') {
                         paused = false;
                         self.onUnpause();
@@ -265,7 +316,6 @@ class Runner extends Group {
                         break;
                     case 'ArrowLeft':
                         self.isSwitchingLeft = true;
-                        console.log(self.isSwitchingLeft);
                         break;
                     case 'ArrowRight':
                         self.isSwitchingRight = true;
@@ -417,6 +467,33 @@ class Runner extends Group {
         box.receiveShadow = false;
         box.position.set(x, y, z);
         return box;
+    }
+
+    createCylinder(
+        radiusTop,
+        radiusBottom,
+        height,
+        radialSegments,
+        color,
+        x,
+        y,
+        z
+    ) {
+        var geom = new THREE.CylinderGeometry(
+            radiusTop,
+            radiusBottom,
+            height,
+            radialSegments
+        );
+        var mat = new THREE.MeshPhongMaterial({
+            color: color,
+            flatShading: true,
+        });
+        var cylinder = new THREE.Mesh(geom, mat);
+        cylinder.castShadow = true;
+        cylinder.receiveShadow = true;
+        cylinder.position.set(x, y, z);
+        return cylinder;
     }
 
     resetParams() {

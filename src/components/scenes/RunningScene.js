@@ -12,7 +12,7 @@ import {
     BikingPath,
     Ocean,
     Mountains,
-    Deer
+    Deer,
 } from 'objects';
 import { BasicLights } from 'lights';
 import { TerrainPhase, obstacleXPositions } from '../config';
@@ -30,7 +30,7 @@ class RunningScene extends Scene {
             updateList: [],
             terrainUpdateList: [],
             gameSpeed: 0,
-            prevGameSpeed: 1,
+            prevGameSpeed: 2,
             paused: true,
         };
 
@@ -44,6 +44,8 @@ class RunningScene extends Scene {
         this.add(lights);
 
         this.terrainController = new TerrainController();
+
+        this.obstacles_hit = [];
 
         // add player to scene: start with runner
         // const runner = new Runner();
@@ -64,7 +66,7 @@ class RunningScene extends Scene {
             this.add(spectator);
         }
 
-        this.obstacles = []
+        this.obstacles = [];
 
         // Add running obstacles to scene
         // const deerZPositions = [-30, -50, -80, -100, -120, -80, -50, -100, -120, -150, -170, -180];
@@ -72,7 +74,7 @@ class RunningScene extends Scene {
         for (let i = 0; i < 8; i++) {
             const x = getRandomObstacleX();
             const deer = new Deer(this, x, 3, deerZPositions[i]);
-            this.add(deer)
+            this.add(deer);
             this.obstacles.push(deer);
         }
 
@@ -137,13 +139,23 @@ class RunningScene extends Scene {
         const playerZPos = player.position.z;
         const playerBoundingBox = new Box3().setFromObject(player);
         for (const obstacle of this.obstacles) {
-            if ((obstacle.position.z - playerZPos > 5) || (obstacle.position.z < playerZPos)) {
+            if (
+                obstacle.position.z - playerZPos > 5 ||
+                obstacle.position.z < playerZPos
+            ) {
                 continue;
             }
             if (obstacle.collidesWith(playerBoundingBox)) {
-                return obstacle;
+                if (this.obstacles_hit.includes(obstacle.uuid)) {
+                    continue;
+                } else {
+                    this.obstacles_hit.push(obstacle.uuid);
+                    console.log(this.obstacles_hit);
+                    return obstacle;
+                }
             }
         }
+        this.obstacles_hit = [];
         return null;
     }
 

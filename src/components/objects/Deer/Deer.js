@@ -5,6 +5,7 @@ import MODEL from './Deer.glb';
 import { CAMERA_Z_POS, CAMERA_OFFSET, TerrainPhase } from '../../config';
 import { getRandomObstacleX } from '../../utils/utils';
 import { TerrainController } from '../TerrainController';
+import { RunningScene } from 'scenes';
 
 class Deer extends Group {
     constructor(parent, x, y, z) {
@@ -14,7 +15,7 @@ class Deer extends Group {
         // Init state
         this.state = {
             terrainController: parent.terrainController,
-            inScene: true
+            inScene: true,
         };
 
         // Load object

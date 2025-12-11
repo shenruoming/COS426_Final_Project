@@ -259,49 +259,6 @@ class Swimmer extends Group {
             // rotate her so that she looks like she's actually swimming
             self.rotateX(-Math.PI / 2);
 
-            var gameOver = false;
-            var paused = true;
-
-            // Start receiving feedback from the player.
-            let keysAllowed = {};
-            // document.addEventListener('keydown', function (e) {
-            //     if (!gameOver) {
-            //         console.log('key pressed');
-            //         var key = e.key;
-            //         console.log(key);
-            //         if (keysAllowed[key] === false) return;
-            //         keysAllowed[key] = false;
-            //         // console.log(keysAllowed);
-            //         if (paused && key.toLowerCase() != 'p') {
-            //             paused = false;
-            //             self.onUnpause();
-            //             if (key == 'ArrowDown') {
-            //                 self.onDownKeyPressed();
-            //             } else if (key == 'ArrowLeft') {
-            //                 self.onLeftKeyPressed();
-            //             } else if (key == 'ArrowRight') {
-            //                 self.onRightKeyPressed();
-            //             }
-            //         } else {
-            //             if (key.toLowerCase() == 'p') {
-            //                 paused = true;
-            //                 self.onPause();
-            //             }
-            //             if (key == 'ArrowDown' && !paused) {
-            //                 self.onDownKeyPressed();
-            //             }
-            //             if (key == 'ArrowLeft' && !paused) {
-            //                 self.onLeftKeyPressed();
-            //             }
-            //             if (key == 'ArrowRight' && !paused) {
-            //                 self.onRightKeyPressed();
-            //             }
-            //         }
-            //     }
-            // });
-            // document.addEventListener('keyup', function (e) {
-            //     keysAllowed[e.key] = true;
-            // });
         }
 
         this.update = function () {
@@ -337,9 +294,15 @@ class Swimmer extends Group {
                     self.diveHeight *
                     Math.sin((1 / self.jumpDuration) * Math.PI * jumpClock);
 
-                // straight arms
+                // diving arms
                 self.leftArm.rotation.x = -180 * deg2Rad;
                 self.rightArm.rotation.x = -180 * deg2Rad;
+
+                self.leftLowerArm.rotation.z = Math.PI / 12;
+                self.rightLowerArm.rotation.z = -Math.PI / 12;
+                self.leftArm.rotation.z = Math.PI / 12;
+                self.rightArm.rotation.z = -Math.PI / 12;
+
                 self.leftLowerArm.rotation.x = 0;
                 self.rightLowerArm.rotation.x = 0;
 
@@ -352,7 +315,12 @@ class Swimmer extends Group {
                     // back to the OG position
                     self.element.position.z = 1;
                 }
-            } else {
+            } else if (!self.parent.state.paused) {
+                self.leftLowerArm.rotation.z = 0;
+                self.rightLowerArm.rotation.z = 0;
+                self.leftArm.rotation.z = 0;
+                self.rightArm.rotation.z = 0;
+                
                 var runningClock = currentTime - self.runningStartTime;
                 var swimFreq = 1.0;
 

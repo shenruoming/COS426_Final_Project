@@ -33,7 +33,7 @@ class TerrainController {
     updateTerrain() {
         if (this.phase == TerrainPhase.RUNNING && this.numRunLaps == 3) {
             this.numRunLaps = 0;
-            console.log("phase changed to swimming")
+            // console.log("phase changed to swimming")
             this.phase = TerrainPhase.SWIMMING;
         } else if (this.phase == TerrainPhase.SWIMMING && this.numSwimLaps == 3) {
             this.numSwimLaps = 0;

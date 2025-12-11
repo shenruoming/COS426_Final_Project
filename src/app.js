@@ -11,6 +11,8 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RunningScene } from 'scenes';
 import { CAMERA_Y_POS, CAMERA_Z_POS } from './components/config';
 import { SeedScene } from './components/scenes';
+import heartLink from './assets/heart.png';
+import './app.css';
 
 // Initialize core ThreeJS components
 const scene = new RunningScene();
@@ -41,6 +43,185 @@ controls.minDistance = 4;
 controls.maxDistance = 16;
 controls.update();
 
+// game control variables
+let gameOver = false;
+
+// INTRO SCREEN: description, instruction button, begin button
+let instructionsContainer = document.createElement('div');
+instructionsContainer.id = 'instructions-container';
+
+// Set up intro screen
+let beginContainer = document.createElement('div');
+beginContainer.id = 'begin-container';
+document.body.appendChild(beginContainer);
+
+let beginContent = document.createElement('div');
+beginContent.id = 'begin-content';
+beginContainer.appendChild(beginContent);
+
+let beginContentText = document.createElement('div');
+beginContentText.id = 'begin-text';
+beginContent.appendChild(beginContentText);
+
+let beginContentTitleText = document.createElement('h1');
+beginContentTitleText.innerText = 'TRIATHLON MANIA';
+beginContentText.appendChild(beginContentTitleText);
+
+let beginContentDescription = document.createElement('p');
+beginContentDescription.innerHTML =
+    "Are you a runner, a swimmer, and a biker... AND in it to win it? OHOHO... you're in for a treat. May the odds be ever in your favor!";
+beginContentText.appendChild(beginContentDescription);
+
+let instructionsButton = document.createElement('div');
+instructionsButton.id = 'instructions-button';
+instructionsButton.innerHTML = 'INSTRUCTIONS';
+beginContent.appendChild(instructionsButton);
+
+// Set up instructions popup
+
+let instructionsContent = document.createElement('div');
+instructionsContent.id = 'instructions-content';
+instructionsContainer.appendChild(instructionsContent);
+
+let instructionsContentText = document.createElement('div');
+instructionsContentText.id = 'instructions-text';
+instructionsContent.appendChild(instructionsContentText);
+
+let instructionsTitleText = document.createElement('h1');
+instructionsTitleText.innerText = 'INSTRUCTIONS';
+instructionsContentText.appendChild(instructionsTitleText);
+
+let instructionsContentDescription = document.createElement('p');
+instructionsContentDescription.innerHTML =
+    "Avoid the obstacles. Hit 3 obstacles and you're done!<br><br>" +
+    // 'SPACE: stop/start<br>' +
+    'LEFT: move left<br>' +
+    'RIGHT: move right<br>' +
+    'UP: jump (for running and biking only)<br>' +
+    'DOWN: dive (for diving only)<br>' +
+    'P: pause';
+instructionsContentText.appendChild(instructionsContentDescription);
+
+let backButton = document.createElement('div');
+backButton.id = 'back-button';
+backButton.innerHTML = 'BACK';
+instructionsContent.appendChild(backButton);
+
+backButton.onclick = function () {
+    beginContainer.style.display = 'flex';
+    instructionsContainer.style.display = 'none';
+};
+
+document.body.appendChild(instructionsContainer);
+
+instructionsButton.onclick = function () {
+    beginContainer.style.display = 'none';
+    instructionsContainer.style.display = 'flex';
+};
+
+let beginContentButton = document.createElement('div');
+beginContentButton.id = 'begin-button';
+beginContentButton.innerHTML = 'BEGIN';
+beginContent.appendChild(beginContentButton);
+
+// Set up countdown
+var countDownDiv = document.createElement('div');
+countDownDiv.id = 'countdown';
+document.body.appendChild(countDownDiv);
+let countDownNumber = document.createElement('h1');
+countDownDiv.appendChild(countDownNumber);
+
+// Begin game
+beginContentButton.onclick = function () {
+    beginContainer.style.display = 'none';
+    countDownDiv.style.display = 'flex';
+    let timeleft = 3;
+    // let countDownInterval = setInterval(function () {
+    //     if (timeleft < 0) {
+    //         countDownDiv.style.display = 'none';
+    //         clearInterval(countDownInterval);
+    //         countDownNumber.innerText = '';
+    //         countDownDiv.style.display = 'none';
+    //     } else if (timeleft == 0) {
+    //         countDownNumber.innerText = 'Go!';
+    //         go.play();
+    //         scene.state.newGameStarted = true;
+    //         newGameStarted = true;
+    //     } else {
+    //         countDownNumber.innerText = timeleft;
+    //         countdown.play();
+    //     }
+    //     timeleft -= 1;
+    // }, 1000);
+};
+
+// Set up lives
+var lives = 3;
+var lifeDiv = document.createElement('div');
+lifeDiv.id = 'lives';
+lifeDiv.innerHTML = 'Lives: ';
+document.body.appendChild(lifeDiv);
+
+// Set up hearts
+let heartDiv = document.createElement('div');
+heartDiv.id = 'heart';
+
+for (let i = 0; i < lives; i++) {
+    let heartImg = document.createElement('img');
+    heartImg.src = heartLink;
+    heartDiv.appendChild(heartImg);
+}
+
+document.body.appendChild(heartDiv);
+
+// Set up outro screen
+let endContainer = document.createElement('div');
+endContainer.id = 'end-container';
+document.body.appendChild(endContainer);
+
+let endContent = document.createElement('div');
+endContent.id = 'end-content';
+endContainer.appendChild(endContent);
+
+let endContentText = document.createElement('div');
+endContentText.id = 'end-text';
+endContent.appendChild(endContentText);
+
+let endContentTitleText = document.createElement('h1');
+endContentTitleText.innerText = 'GAME OVER';
+endContentText.appendChild(endContentTitleText);
+
+let endContentDescription = document.createElement('p');
+// endContentDescription.innerHTML = 'Your score:';
+endContentText.appendChild(endContentDescription);
+
+// let endContentScore = document.createElement('h1');
+// endContentScore.id = 'end-score';
+// endContentText.appendChild(endContentScore);
+
+let endContentButton = document.createElement('div');
+endContentButton.id = 'end-button';
+endContentButton.innerHTML = 'PLAY AGAIN';
+endContent.appendChild(endContentButton);
+
+// End game and reset by refreshing
+endContentButton.onclick = function () {
+    endContainer.style.display = 'none';
+    scene.state.pause = false;
+    // paused = false;
+    lives = 3;
+    // score = 0;
+    gameOver = false;
+    for (let i = 0; i < lives; i++) {
+        let heartImg = document.createElement('img');
+        heartImg.src = heartLink;
+        heartDiv.appendChild(heartImg);
+    }
+    window.location.reload();
+};
+
+endContainer.style.display = 'none';
+
 // Render loop
 const onAnimationFrameHandler = (timeStamp) => {
     // controls.update();
@@ -48,7 +229,18 @@ const onAnimationFrameHandler = (timeStamp) => {
     scene.update && scene.update(timeStamp);
     const firstCollision = scene.getObstacleCollision();
     if (firstCollision != null) {
-            console.log(firstCollision);
+        console.log(firstCollision);
+        lives -= 1;
+        heartDiv.removeChild(heartDiv.lastChild);
+    }
+    // game over if lives are 0
+    if (lives <= 0) {
+        // if (!gameOver) {
+        //     lose.play();
+        // }
+        gameOver = scene.pause();
+        endContainer.style.display = 'flex';
+        // endContentScore.innerText = score;
     }
     window.requestAnimationFrame(onAnimationFrameHandler);
 };

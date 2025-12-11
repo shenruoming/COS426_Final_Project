@@ -25,7 +25,7 @@ class Deer extends Group {
             this.add(gltf.scene);
         });
 
-        const scaleFactor = 0.03;
+        const scaleFactor = 0.05;
         this.scale.set(scaleFactor, scaleFactor, scaleFactor);
         this.position.set(x, y, z);
 
@@ -35,8 +35,8 @@ class Deer extends Group {
 
     update(timeStamp) {
         let inScene = this.state.inScene;
-        if (this.state.terrainController.phase != TerrainPhase.RUNNING) {
-            if (inScene && this.position.z < -100) {
+        if (this.state.terrainController.characterPhase != TerrainPhase.RUNNING) {
+            if (inScene) {
                 this.visible = false;
                 this.state.inScene = false;
                 this.position.y = -100;
@@ -52,6 +52,10 @@ class Deer extends Group {
             if (this.position.z > CAMERA_Z_POS + CAMERA_OFFSET) {
                 this.position.z -= 300;
                 this.position.x = getRandomObstacleX();
+
+                if (this.parent.prevCollisions.has(this)) {
+                    this.parent.prevCollisions.delete(this);
+                }
             }
         }
     }

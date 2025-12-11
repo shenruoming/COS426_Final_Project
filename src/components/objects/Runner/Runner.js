@@ -59,7 +59,7 @@ class Runner extends Group {
         this.shirtColor = Colors.purple;
         this.shortsColor = Colors.lightblue;
         this.stepFreq = 2;
-        this.jumpHeight = 5; // controls how high the character jumps
+        this.jumpHeight = 6; // controls how high the character jumps
         this.jumpDuration = 0.5; // Controls how long the jump lasts (in seconds)
 
         // Initialize the character.

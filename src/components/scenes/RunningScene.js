@@ -12,7 +12,8 @@ import {
     BikingPath,
     Ocean,
     Mountains,
-    Deer
+    Deer,
+    Shark
 } from 'objects';
 import { BasicLights } from 'lights';
 import { TerrainPhase, obstacleXPositions } from '../config';
@@ -30,11 +31,12 @@ class RunningScene extends Scene {
             updateList: [],
             terrainUpdateList: [],
             gameSpeed: 0,
-            prevGameSpeed: 1,
+            prevGameSpeed: 0.5,
             paused: true,
+            gameOver: false
         };
 
-        this.gameOver = false;
+        this.prevCollisions = new Set();
 
         // Set background to a nice color
         this.background = new Color(0x7ec0ee);
@@ -71,7 +73,7 @@ class RunningScene extends Scene {
         const deerZPositions = [-30, -50, -80, -100, -120, -80, -50, -100];
         for (let i = 0; i < 8; i++) {
             const x = getRandomObstacleX();
-            const deer = new Deer(this, x, 3, deerZPositions[i]);
+            const deer = new Deer(this, x, 1.8, deerZPositions[i]);
             this.add(deer)
             this.obstacles.push(deer);
         }
@@ -80,6 +82,10 @@ class RunningScene extends Scene {
         const swimmingPath = new SwimmingPath(this);
         const ocean = new Ocean(this);
         this.add(swimmingPath, ocean);
+
+        // add shark
+        // const shark = new Shark(this, 0, 3, -5);
+        // this.add(shark);
 
         // const swimmer = new Swimmer();
         // swimmer.position.x;
@@ -140,7 +146,8 @@ class RunningScene extends Scene {
             if ((obstacle.position.z - playerZPos > 5) || (obstacle.position.z < playerZPos)) {
                 continue;
             }
-            if (obstacle.collidesWith(playerBoundingBox)) {
+            if (obstacle.collidesWith(playerBoundingBox) && !this.prevCollisions.has(obstacle)) {
+                this.prevCollisions.add(obstacle);
                 return obstacle;
             }
         }
@@ -148,8 +155,10 @@ class RunningScene extends Scene {
     }
 
     characterSwitch(newPhase) {
+        let currX = 0;
         if (this.currentCharacter) {
             // remove the old character
+            currX = this.currentCharacter.element.position.x;
             this.remove(this.currentCharacter);
 
             // remove old character from updateList
@@ -166,12 +175,16 @@ class RunningScene extends Scene {
         switch (newPhase) {
             case TerrainPhase.RUNNING:
                 newCharacter = new Runner();
+                newCharacter.element.position.x = currX;
                 break;
             case TerrainPhase.SWIMMING:
                 newCharacter = new Swimmer();
+                newCharacter.element.position.x = currX;
                 break;
             case TerrainPhase.BIKING:
                 newCharacter = new Biker();
+                newCharacter.element.position.x = currX;
+                newCharacter.children[0].position.x = currX;
                 break;
             default:
                 break;

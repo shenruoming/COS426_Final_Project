@@ -36,8 +36,6 @@ class RunningScene extends Scene {
             gameOver: false
         };
 
-        this.prevCollisions = new Set();
-
         // Set background to a nice color
         this.background = new Color(0x7ec0ee);
 
@@ -46,6 +44,8 @@ class RunningScene extends Scene {
         this.add(lights);
 
         this.terrainController = new TerrainController();
+
+        this.obstacles_hit = new Set();
 
         // add player to scene: start with runner
         // const runner = new Runner();
@@ -66,7 +66,7 @@ class RunningScene extends Scene {
             this.add(spectator);
         }
 
-        this.obstacles = []
+        this.obstacles = [];
 
         // Add running obstacles to scene
         // const deerZPositions = [-30, -50, -80, -100, -120, -80, -50, -100, -120, -150, -170, -180];
@@ -143,11 +143,11 @@ class RunningScene extends Scene {
         const playerZPos = player.position.z;
         const playerBoundingBox = new Box3().setFromObject(player);
         for (const obstacle of this.obstacles) {
-            if ((obstacle.position.z - playerZPos > 5) || (obstacle.position.z < playerZPos)) {
+            if (obstacle.position.z - playerZPos > 5 || obstacle.position.z < playerZPos) {
                 continue;
             }
-            if (obstacle.collidesWith(playerBoundingBox) && !this.prevCollisions.has(obstacle)) {
-                this.prevCollisions.add(obstacle);
+            if (obstacle.collidesWith(playerBoundingBox) && !this.obstacles_hit.has(obstacle.uuid)) {
+                this.obstacles_hit.add(obstacle.uuid);
                 return obstacle;
             }
         }

@@ -5,6 +5,7 @@ import MODEL from './Deer.glb';
 import { CAMERA_Z_POS, CAMERA_OFFSET, TerrainPhase } from '../../config';
 import { getRandomObstacleX } from '../../utils/utils';
 import { TerrainController } from '../TerrainController';
+import { RunningScene } from 'scenes';
 
 class Deer extends Group {
     constructor(parent, x, y, z) {
@@ -14,7 +15,7 @@ class Deer extends Group {
         // Init state
         this.state = {
             terrainController: parent.terrainController,
-            inScene: true
+            inScene: true,
         };
 
         // Load object
@@ -53,8 +54,8 @@ class Deer extends Group {
                 this.position.z -= 300;
                 this.position.x = getRandomObstacleX();
 
-                if (this.parent.prevCollisions.has(this)) {
-                    this.parent.prevCollisions.delete(this);
+                if (this.parent.obstacles_hit.has(this.uuid)) {
+                    this.parent.obstacles_hit.delete(this.uuid);
                 }
             }
         }

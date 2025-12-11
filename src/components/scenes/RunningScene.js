@@ -18,7 +18,7 @@ import {
 } from 'objects';
 import { BasicLights } from 'lights';
 import { TerrainPhase, obstacleXPositions } from '../config';
-import { getRandomObstacleX } from '../utils/utils';
+import { getRandomObstacleX, getRandomSideX } from '../utils/utils';
 
 class RunningScene extends Scene {
     constructor() {
@@ -95,9 +95,9 @@ class RunningScene extends Scene {
             direction *= -1;
         }
         // add birds
-        const birdZPositions = [-20, -80, -110, -50, -140, -140, -160, -180, -210, -240];
-        for (let i = 0; i < 5; i++) {
-            const x = getRandomObstacleX();
+        const birdZPositions = [-20, -110, -160, -210, -140, -160, -180, -210, -240];
+        for (let i = 0; i < 4; i++) {
+            const x = getRandomSideX();
             const bird = new Bird(this, -6 * direction, 1, birdZPositions[i] + 100);
             this.add(bird)
             this.obstacles.push(bird);
@@ -149,7 +149,10 @@ class RunningScene extends Scene {
     getObstacleCollision() {
         const player = this.currentCharacter;
         const playerZPos = player.position.z;
-        const playerBoundingBox = new Box3().setFromObject(player);
+        let playerBoundingBox = new Box3().setFromObject(player);
+        if (player.name == 'biker') {
+            playerBoundingBox = new Box3().setFromObject(player.element);
+        }
         for (const obstacle of this.obstacles) {
             if (obstacle.position.z - playerZPos > 5 || obstacle.position.z < playerZPos) {
                 continue;

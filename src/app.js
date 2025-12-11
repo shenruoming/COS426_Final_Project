@@ -6,7 +6,7 @@
  * handles window resizes.
  *
  */
-import { WebGLRenderer, PerspectiveCamera, Vector3 } from 'three';
+import { WebGLRenderer, PerspectiveCamera, Vector3, Fog, Color } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RunningScene } from 'scenes';
 import { CAMERA_Y_POS, CAMERA_Z_POS } from './components/config';
@@ -21,6 +21,9 @@ const renderer = new WebGLRenderer({ antialias: true });
 // Set up camera
 camera.position.set(0, 5, CAMERA_Z_POS - 10);
 camera.lookAt(new Vector3(0, 0, -10));
+
+// Add fog
+scene.fog = new Fog(new Color(0x1f1757), 1, 250);
 
 // Set up renderer, canvas, and minor CSS adjustments
 renderer.setPixelRatio(window.devicePixelRatio);

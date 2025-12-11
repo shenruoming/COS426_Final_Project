@@ -12,6 +12,8 @@ class BikingPath extends Group {
             reached: false,
         };
 
+        this.name = 'bikingPath';
+
         const geometry = new BoxBufferGeometry( 8, 1, PATH_LENGTH );
         const material = new MeshBasicMaterial( { color: 0x38393b } );
         const path = new Mesh( geometry, material );

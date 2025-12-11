@@ -13,6 +13,7 @@ class RunningPath extends Group {
             reached: false,
             terrainController: terrainController
         };
+        this.name = 'runningPath';
 
         const geometry = new BoxBufferGeometry( 8, 1, PATH_LENGTH );
         const material = new MeshBasicMaterial( { color: 0x964B00 } );

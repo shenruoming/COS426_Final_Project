@@ -14,9 +14,12 @@ class Deer extends Group {
 
         // Init state
         this.state = {
-            terrainController: parent.terrainController,
             inScene: true,
+            pastEnd: false,
+            path: parent.getObjectByName('swimmingPath')
         };
+
+        this.terrainController = parent.terrainController;
 
         // Load object
         const loader = new GLTFLoader();
@@ -36,27 +39,31 @@ class Deer extends Group {
 
     update(timeStamp) {
         let inScene = this.state.inScene;
-        if (this.state.terrainController.characterPhase != TerrainPhase.RUNNING) {
+        if (this.terrainController.characterPhase != TerrainPhase.RUNNING) {
             if (inScene) {
                 this.visible = false;
                 this.state.inScene = false;
                 this.position.y = -100;
             }
         } else {
+            // generate deer
             if (!inScene) {
                 this.visible = true;
                 this.state.inScene = true;
-                this.position.y = 3;
-                this.position.z -= 250;
+                this.position.y = 1.8;
+                this.position.z -= 100;
             }
             this.position.z += this.parent.state.gameSpeed * 0.8;
             if (this.position.z > CAMERA_Z_POS + CAMERA_OFFSET) {
-                this.position.z -= 300;
+                this.position.z -= Math.floor(Math.random() * 50) + 200;
                 this.position.x = getRandomObstacleX();
 
                 if (this.parent.obstacles_hit.has(this.uuid)) {
                     this.parent.obstacles_hit.delete(this.uuid);
                 }
+            }
+            if (this.position.z < this.getPathEnd()) {
+                this.visible = false;
             }
         }
     }
@@ -64,6 +71,11 @@ class Deer extends Group {
     collidesWith(otherBBox) {
         const bbox = new Box3().setFromObject(this);
         return bbox.intersectsBox(otherBBox);
+    }
+
+    getPathEnd() {
+        let bbox = new Box3().setFromObject(this.state.path.children[0]);
+        return bbox.max.z + 10;
     }
 }
 

@@ -12,8 +12,16 @@ class SwimmingPath extends Group {
             reached: false,
         };
 
+        this.name = 'swimmingPath';
+
         const geometry = new BoxBufferGeometry( 8, 1, PATH_LENGTH );
-        const material = new MeshBasicMaterial( { color: 0x68c3c0 } );
+        const material = new MeshBasicMaterial( { 
+            color: 0x68c3c0, 
+            transparent: true,
+            opacity: 0.5
+         } );
+        // material.depthTest = false;
+        material.depthWrite = false;
         const path = new Mesh( geometry, material );
 
         path.position.set(0, -0.5, 0);

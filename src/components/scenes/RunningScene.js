@@ -36,8 +36,11 @@ class RunningScene extends Scene {
             gameOver: false
         };
 
+        // other backgrounds
+        const backgrounds = [0x191970, 0x7ec0ee, 0x1f1757];
+
         // Set background to a nice color
-        this.background = new Color(0x7ec0ee);
+        this.background = new Color(backgrounds[2]);
 
         // add lights to scene
         const lights = new BasicLights();
@@ -68,24 +71,11 @@ class RunningScene extends Scene {
 
         this.obstacles = [];
 
-        // Add running obstacles to scene
-        // const deerZPositions = [-30, -50, -80, -100, -120, -80, -50, -100, -120, -150, -170, -180];
-        const deerZPositions = [-30, -50, -80, -100, -120, -80, -50, -100];
-        for (let i = 0; i < 8; i++) {
-            const x = getRandomObstacleX();
-            const deer = new Deer(this, x, 1.8, deerZPositions[i]);
-            this.add(deer)
-            this.obstacles.push(deer);
-        }
-
         // add water to scene: swimming
         const swimmingPath = new SwimmingPath(this);
         const ocean = new Ocean(this);
         this.add(swimmingPath, ocean);
 
-        // add shark
-        // const shark = new Shark(this, 0, 3, -5);
-        // this.add(shark);
 
         // const swimmer = new Swimmer();
         // swimmer.position.x;
@@ -95,6 +85,26 @@ class RunningScene extends Scene {
         const bikingPath = new BikingPath(this);
         const mountains = new Mountains(this);
         this.add(bikingPath, mountains);
+
+        // Add running obstacles to scene
+        const deerZPositions = [-20, -40, -70, -90, -110, -80, -50, -100, -140, -160, -180, -210, -240, -270, -240];
+        for (let i = 0; i < 14; i++) {
+            const x = getRandomObstacleX();
+            const deer = new Deer(this, x, 1.8, deerZPositions[i]);
+            this.add(deer)
+            this.obstacles.push(deer);
+        }
+        // add shark
+        const sharkZPositions = [-20, -80, -110, -50, -100, -140, -160, -180, -210, -240];
+        let direction = 1;
+        for (let i = 0; i < 10; i++) {
+            const x = getRandomObstacleX();
+            const shark = new Shark(this, -4 * direction, 1, sharkZPositions[i] + 100);
+            this.add(shark)
+            this.obstacles.push(shark);
+            direction *= -1;
+        }
+        // this.add(shark);
 
         // for debugging
         const axesHelper = new AxesHelper(5);

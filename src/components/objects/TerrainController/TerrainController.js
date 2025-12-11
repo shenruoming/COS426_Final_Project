@@ -1,7 +1,7 @@
 import { PATH_LENGTH, CAMERA_OFFSET, CAMERA_Z_POS, TerrainPhase } from '../../config';
 
 class TerrainController {
-    constructor() {
+    constructor(runningPath, swimmingPath, bikingPath) {
         this.phase = TerrainPhase.RUNNING;
         this.characterPhase = TerrainPhase.RUNNING;
         this.startRunTime = new Date() / 1000;
@@ -10,6 +10,9 @@ class TerrainController {
         this.numRunLaps = 0;
         this.numSwimLaps = 0;
         this.numBikeLaps = 0;
+        this.runningPath = runningPath;
+        this.swimmingPath = swimmingPath;
+        this.bikingPath = bikingPath;
     }
     // update() {
     //     const currTime = new Date() / 1000;
@@ -40,6 +43,18 @@ class TerrainController {
             this.phase = TerrainPhase.RUNNING;
         }
     }
+    // getPathEnd(terrainPhase) {
+    //     let path = null;
+    //     if (terrainPhase == TerrainPhase.RUNNING) {
+    //         path = this.runningPath.children[0]
+    //     } else if (terrainPhase == TerrainPhase.SWIMMING) {
+    //         path = this.swimmingPath.children[0];
+    //     } else {
+    //         path = this.bikingPath.children[0];
+    //     }
+    //     let bbox = new Box3().setFromObject(path);
+    //     return bbox.min.z;
+    // }
 }
 
 export default TerrainController;

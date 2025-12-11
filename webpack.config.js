@@ -13,7 +13,7 @@ module.exports = {
     target: 'web',
     devtool: 'source-map',
     stats: {
-        warnings: false
+        warnings: false,
     },
     module: {
         rules: [
@@ -31,6 +31,10 @@ module.exports = {
                 test: /\.(vert|frag|glsl|shader|txt)$/i,
                 use: 'raw-loader',
                 exclude: path.resolve(__dirname, './node_modules/'),
+            },
+            {
+                test: /\.css$/i,
+                use: ['style-loader', 'css-loader'],
             },
         ],
     },

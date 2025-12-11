@@ -73,7 +73,7 @@ class Bird extends Group {
             if (!inScene) {
                 this.visible = true;
                 this.state.inScene = true;
-                this.position.y = 2;
+                this.position.y = 1;
                 this.position.z -= 100;
             }
             this.position.z += this.parent.state.gameSpeed * 0.75;

@@ -6,12 +6,14 @@ class BasicLights extends Group {
         super(...args);
 
         const dir = new SpotLight('white', 0.5, 7, 0.8, 1, 1);
-        const ambi = new AmbientLight(0x404040, 1.72);
-        // const hemi = new HemisphereLight(0xffffbb, 0x080820, 2.3);
+        const ambi = new AmbientLight(0x404040, 0.4);
+        const hemi = new HemisphereLight('white', 0x080820, 1);
 
         dir.position.set(0, 5, -5);
         dir.target.position.set(0, 0, 0);
-        this.add(ambi, dir);
+        // this.add(ambi);
+        this.add(hemi);
+        // this.add(dir)
 
         const shadowLight = new DirectionalLight(0xffffff, 0.8);
 

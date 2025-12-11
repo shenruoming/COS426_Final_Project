@@ -15,3 +15,4 @@ export * from './Deer';
 export * from './Shark';
 export * from './Boulder';
 export * from './Bicycle';
+export * from './Bird';

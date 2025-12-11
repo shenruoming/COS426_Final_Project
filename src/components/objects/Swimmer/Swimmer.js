@@ -33,7 +33,7 @@ class Swimmer extends Group {
         //     running: true,
         // };
 
-        this.Character();
+        this.Character(parent);
         this.name = 'swimmer';
     }
 
@@ -49,7 +49,7 @@ class Swimmer extends Group {
         return average + offset;
     }
 
-    Character() {
+    Character(parent) {
         // Explicit binding of this even in changing contexts.
         var self = this;
 
@@ -59,7 +59,9 @@ class Swimmer extends Group {
         this.shirtColor = Colors.blue;
         this.shortsColor = Colors.blue;
         this.stepFreq = 1.5;
-        this.diveHeight = -2; // controls how high the character jumps
+        this.diveHeight = -2; // controls how high the character dives
+
+        // maybe change this based on parent.state.gamespeed?
         this.jumpDuration = 0.7; // Controls how long the jump lasts (in seconds)
 
         // Initialize the character.
@@ -333,7 +335,7 @@ class Swimmer extends Group {
                 var jumpClock = currentTime - self.diveStartTime;
                 self.element.position.z =
                     self.diveHeight *
-                    Math.sin((1 / self.jumpDuration) * jumpClock);
+                    Math.sin((1 / self.jumpDuration) * Math.PI * jumpClock);
 
                 // straight arms
                 self.leftArm.rotation.x = -180 * deg2Rad;

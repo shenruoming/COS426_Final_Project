@@ -13,7 +13,8 @@ import {
     Ocean,
     Mountains,
     Deer,
-    Shark
+    Shark,
+    Bird
 } from 'objects';
 import { BasicLights } from 'lights';
 import { TerrainPhase, obstacleXPositions } from '../config';
@@ -50,11 +51,6 @@ class RunningScene extends Scene {
 
         this.obstacles_hit = new Set();
 
-        // add player to scene: start with runner
-        // const runner = new Runner();
-        // this.addToUpdateList(runner);
-        // this.add(runner);
-
         // for switching character based on terrain
         this.characterSwitch();
 
@@ -76,12 +72,6 @@ class RunningScene extends Scene {
         const ocean = new Ocean(this);
         this.add(swimmingPath, ocean);
 
-
-        // const swimmer = new Swimmer();
-        // swimmer.position.x;
-        // this.addToUpdateList(swimmer);
-        // this.add(swimmer);
-
         const bikingPath = new BikingPath(this);
         const mountains = new Mountains(this);
         this.add(bikingPath, mountains);
@@ -94,7 +84,7 @@ class RunningScene extends Scene {
             this.add(deer)
             this.obstacles.push(deer);
         }
-        // add shark
+        // add sharks
         const sharkZPositions = [-20, -80, -110, -50, -100, -140, -160, -180, -210, -240];
         let direction = 1;
         for (let i = 0; i < 10; i++) {
@@ -104,7 +94,15 @@ class RunningScene extends Scene {
             this.obstacles.push(shark);
             direction *= -1;
         }
-        // this.add(shark);
+        // add birds
+        const birdZPositions = [-20, -80, -110, -50, -140, -140, -160, -180, -210, -240];
+        for (let i = 0; i < 5; i++) {
+            const x = getRandomObstacleX();
+            const bird = new Bird(this, -6 * direction, 1, birdZPositions[i] + 100);
+            this.add(bird)
+            this.obstacles.push(bird);
+            direction *= -1;
+        }
 
         // for debugging
         const axesHelper = new AxesHelper(5);
@@ -188,7 +186,7 @@ class RunningScene extends Scene {
                 newCharacter.element.position.x = currX;
                 break;
             case TerrainPhase.SWIMMING:
-                newCharacter = new Swimmer();
+                newCharacter = new Swimmer(this);
                 newCharacter.element.position.x = currX;
                 break;
             case TerrainPhase.BIKING:

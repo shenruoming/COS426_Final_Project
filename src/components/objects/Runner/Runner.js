@@ -1,11 +1,6 @@
 import * as THREE from 'three';
 import {
     Group,
-    BoxGeometry,
-    Mesh,
-    MeshToonMaterial,
-    VertexColors,
-    BufferGeometry,
 } from 'three';
 import { TWEEN } from 'three/examples/jsm/libs/tween.module.min.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
@@ -458,35 +453,6 @@ class Runner extends Group {
         this.position.y = 1.4;
         this.collected = false;
     }
-
-    // onCollision() {
-    //     if (!this.collected) {
-    //         this.collected = true;
-    //         const spin = new TWEEN.Tween(this.rotation).to(
-    //             { y: this.rotation.y + 2 * Math.PI },
-    //             200
-    //         );
-    //         const jumpUp = new TWEEN.Tween(this.position)
-    //             .to({ y: this.position.y + 2 }, 200)
-    //             .easing(TWEEN.Easing.Quadratic.Out);
-    //         const fallDown = new TWEEN.Tween(this.position)
-    //             .to({ y: -1 }, 300)
-    //             .easing(TWEEN.Easing.Quadratic.In);
-    //         const resetPos = new TWEEN.Tween(this.position).to(
-    //             { z: -(this.parent.fog.far + 50 * Math.random()) },
-    //             100
-    //         );
-
-    //         // Reset position after jumping up and down
-    //         jumpUp.onComplete(() => fallDown.start());
-    //         fallDown.onComplete(() => resetPos.start());
-    //         resetPos.onComplete(() => this.resetParams());
-
-    //         // Start animation
-    //         jumpUp.start();
-    //         spin.start();
-    //     }
-    // }
 }
 
 export default Runner;

@@ -1,5 +1,5 @@
 import * as Dat from 'dat.gui';
-import { Scene, Color, AxesHelper, Box3 } from 'three';
+import { Scene, Color, AxesHelper, Box3, TextureLoader, RepeatWrapping} from 'three';
 import {
     RunningPath,
     SwimmingPath,
@@ -21,6 +21,21 @@ import {
 import { BasicLights } from 'lights';
 import { TerrainPhase, obstacleXPositions } from '../config';
 import { getRandomObstacleX, getRandomSideX, getRandomRewardX } from '../utils/utils';
+import DAYLIGHT from '../../assets/daylight.jpg';
+import STARRY from '../../assets/starry_night.jpg';
+import splash from '../../sounds/shark.wav';
+import deer from '../../sounds/deer.wav';
+import squawk from '../../sounds/squawk.wav';
+
+// Add sounds
+const splashSound = new Audio(splash);
+splashSound.load();
+
+const deerSound = new Audio(deer);
+deerSound.load();
+
+const squawkSound = new Audio(squawk);
+squawkSound.load();
 
 class RunningScene extends Scene {
     constructor() {
@@ -34,7 +49,7 @@ class RunningScene extends Scene {
             updateList: [],
             terrainUpdateList: [],
             gameSpeed: 0,
-            prevGameSpeed: 0.5,
+            prevGameSpeed: 0.7,
             paused: true,
             gameOver: false
         };
@@ -153,7 +168,7 @@ class RunningScene extends Scene {
     }
 
     update(timeStamp) {
-        const { updateList, terrainUpdateList } = this.state;
+        const { updateList, terrainUpdateList, startTime, skyMode, textureList} = this.state;
         this.terrainController.updateTerrain();
 
         // for new terrain... switch character
@@ -168,7 +183,13 @@ class RunningScene extends Scene {
         for (const obj of terrainUpdateList) {
             obj.update(timeStamp, this.terrainController);
         }
+
+        const currTime = Date.now() / 1000;
+        const elapsedTime = currTime - (this.state.startTime / 1000);
+
     }
+
+    
 
     pause() {
         this.state.paused = true;
@@ -194,7 +215,18 @@ class RunningScene extends Scene {
             }
             if (obstacle.collidesWith(playerBoundingBox) && !this.obstacles_hit.has(obstacle.uuid)) {
                 this.obstacles_hit.add(obstacle.uuid);
+                if (this.terrainController.characterPhase == 2) {
+                    let dingClone = splashSound.cloneNode();
+                    dingClone.play();
+                } else if (this.terrainController.characterPhase == 0) {
+                    let clone = deerSound.cloneNode();
+                    clone.play();
+                } else if (this.terrainController.characterPhase == 4) {
+                    let squawkClone = squawkSound.cloneNode();
+                    squawkClone.play();
+                }
                 return obstacle;
+            
             }
         }
         return null;

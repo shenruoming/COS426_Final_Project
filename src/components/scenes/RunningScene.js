@@ -8,6 +8,7 @@ import {
     RepeatWrapping,
 } from 'three';
 import {
+    Nest,
     RunningPath,
     SwimmingPath,
     Grass,
@@ -28,7 +29,11 @@ import {
     Dory,
     Nemo,
     Stingray,
-    Whale
+    Whale,
+    MTree,
+    Bush,
+    Tree,
+    Lightning
 } from 'objects';
 import { BasicLights } from 'lights';
 import {
@@ -41,6 +46,7 @@ import {
     getRandomObstacleX,
     getRandomSideX,
     getRandomRewardX,
+    getRandomExtraX
 } from '../utils/utils';
 import splash from '../../sounds/shark.wav';
 import deer from '../../sounds/deer.wav';
@@ -194,6 +200,43 @@ class RunningScene extends Scene {
             this.allRunRewards.push(acorn);
         }
 
+
+        // add birdNest (running rewards)
+        const nestZPositions = [-20, -40, -70, -90, -110, -80, -50, -100, -140, -160, -180, -210,
+            -240, -270, -240,];
+        for (let i = 0; i < 14; i++) {
+            const x = getRandomExtraX();
+            const nest = new Nest(this, -6, 0, nestZPositions[i]);
+            this.add(nest);
+        }
+
+        // add birdNest (running rewards)
+        const treePositions = [0, -10, -5, -15, -20, -40, -70, -90, -110, -80, -50, -100, -140, -160, -180, -210,
+            -240, -270, -240,];
+        for (let i = 0; i < 18; i++) {
+            const x = getRandomExtraX();
+            const tree = new MTree(this, x, -1, treePositions[i]);
+            this.add(tree);
+        }
+
+        // add birdNest (running rewards)
+        const bushPositions = [10, 5, 7, 0, -10, -5, -15, -20, -40, -90, -110, -80, -100, -140,  -210,
+            -240, -270, -240,];
+        for (let i = 0; i < 18; i++) {
+            const x = getRandomExtraX();
+            const bush = new Bush(this, x, 0, bushPositions[i]);
+            this.add(bush);
+        }
+
+        // add birdNest (running rewards)
+        const treeTPositions = [10, -10, -5, -15, -20, -40, -90, -110, -80,  -210,
+            -240, -270, -240,];
+        for (let i = 0; i < 13; i++) {
+            const x = getRandomExtraX();
+            const treee = new Tree(this, x, 5.5, treeTPositions[i]);
+            this.add(treee);
+        }
+
         // add treasure (swimming rewards)
         const treasureZPositions = [-15, -85, -100, -125];
         for (let i = 0; i < 3; i++) {
@@ -207,6 +250,16 @@ class RunningScene extends Scene {
             this.add(treasure);
             this.rewards.push(treasure);
             this.allSwimRewards.push(treasure);
+        }
+
+        // add acorns (running rewards)
+        const lightningPos = [-15, -85, -100, -125];
+        for (let i = 0; i < 3; i++) {
+            const x = getRandomRewardX() * 2;
+            const lightning = new Lightning(this, x, 1, lightningPos[i]);
+            this.add(lightning);
+            this.rewards.push(lightning);
+            this.allBikeRewards.push(lightning);
         }
 
         // for spectator's random x position
@@ -224,7 +277,7 @@ class RunningScene extends Scene {
         for (let i = 0; i < num_spectators; i++) {
             // random side and random x-location
             const side = getRandomSideX();
-            const x = 0;
+            let x = 0;
             if (side == -6) {
                 x = getRandomInt(-11, -6);
             } else if (side == 6) {

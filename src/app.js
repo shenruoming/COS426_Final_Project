@@ -16,10 +16,14 @@ import game from './sounds/game_over.wav';
 import bikeLink from './assets/biker.png';
 import runLink from './assets/runner.png';
 import swimLink from './assets/swimmer.png';
+import coin from './sounds/coin.wav';
 import './app.css';
 
 const tromSound = new Audio(game);
 tromSound.load();
+
+const coinSound = new Audio(coin);
+coinSound.load();
 
 // Initialize core ThreeJS components
 const scene = new RunningScene();
@@ -249,6 +253,8 @@ const onAnimationFrameHandler = (timeStamp) => {
         let heartImg = document.createElement('img');
         heartImg.src = heartLink;
         heartDiv.appendChild(heartImg);
+        const coin = coinSound.cloneNode();
+        coin.play();
     }
 
     // remove rewards colliding with obstacles

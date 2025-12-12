@@ -2,6 +2,7 @@ import * as THREE from 'three';
 const obstacleXPositions = [0, 1.7, -1.7];
 const rewardXPositions = [0, 1, -1];
 const sideXPositions = [-6, 6];
+const extraXPositions = [-3.9, 3.9];
 
 function getRandomObstacleX() {
     return obstacleXPositions[Math.floor(Math.random()*3)];
@@ -13,6 +14,10 @@ function getRandomSideX() {
 
 function getRandomRewardX() {
     return rewardXPositions[Math.floor(Math.random()*3)];
+}
+
+function getRandomExtraX() {
+    return extraXPositions[Math.floor(Math.random()*2)];
 }
 
 
@@ -82,4 +87,4 @@ function createLimb(dx, dy, dz, color, x, y, z) {
     return limb;
 }
 
-export { getRandomObstacleX, getRandomSideX, getRandomRewardX, sinusoid, createCylinder, createBox, createGroup, createLimb };
+export { getRandomObstacleX, getRandomSideX, getRandomRewardX, getRandomExtraX, sinusoid, createCylinder, createBox, createGroup, createLimb };

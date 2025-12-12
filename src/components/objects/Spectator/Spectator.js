@@ -80,7 +80,7 @@ class Spectator extends Group {
         self.element.position.x = x;
         self.element.position.z = z;
         self.element.position.y = y;
-        self.element.rotation.y = - Math.PI / 2;
+        self.element.rotation.y = -3 * Math.PI / 4;
 
         /**
          * Builds the character in depth-first order. The parts of are

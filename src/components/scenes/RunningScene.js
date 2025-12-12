@@ -25,6 +25,11 @@ import {
     Bird,
     Acorn,
     Treasure,
+    Dolphin,
+    Dory,
+    Nemo,
+    Stingray,
+    Whale
     MTree,
     Bush,
     Tree,
@@ -38,8 +43,6 @@ import {
     getRandomRewardX,
     getRandomExtraX
 } from '../utils/utils';
-import DAYLIGHT from '../../assets/daylight.jpg';
-import STARRY from '../../assets/starry_night.jpg';
 import splash from '../../sounds/shark.wav';
 import deer from '../../sounds/deer.wav';
 import squawk from '../../sounds/squawk.wav';
@@ -66,7 +69,7 @@ class RunningScene extends Scene {
             updateList: [],
             terrainUpdateList: [],
             gameSpeed: 0,
-            prevGameSpeed: 0.3,
+            prevGameSpeed: 0.5,
             paused: true,
             gameOver: false,
             backgroundColors: [
@@ -265,6 +268,8 @@ class RunningScene extends Scene {
         // for debugging
         const axesHelper = new AxesHelper(5);
         this.add(axesHelper);
+
+        this.addSeaCreatures();
     }
 
     addToUpdateList(object) {
@@ -279,9 +284,6 @@ class RunningScene extends Scene {
         const {
             updateList,
             terrainUpdateList,
-            startTime,
-            skyMode,
-            textureList,
         } = this.state;
         this.terrainController.updateTerrain();
 
@@ -472,6 +474,64 @@ class RunningScene extends Scene {
                     reward.visible = false;
                 }
             }
+        }
+    }
+
+    addSeaCreatures() {
+        // testing sea creatures
+        const dolphinZPositions = [-10, -60, -150, -90, -210, -240];
+        let direction = 1;
+        for (let i = 0; i < dolphinZPositions.length; i++) {
+            const dolphin = new Dolphin(this, 15 * direction, 0, dolphinZPositions[i] + 70);
+            this.add(dolphin);
+            direction *= -1;
+        }
+
+        const fishZPositions = [];
+        for (let i = 1; i < 41; i++) {
+            fishZPositions.push(-5 * i);
+        }
+        const fishXPositions = []
+        let x = 11.5;
+        for (let i = 1; i < 21; i++) {
+            fishXPositions.push(x);
+            x += 0.5;
+        }
+        direction = -1;
+        for (let i = 0; i < fishZPositions.length; i++) {
+            const x = fishXPositions[Math.floor(Math.random() * fishXPositions.length)];
+            const dory = new Dory(this, x * direction, -2, fishZPositions[i] + 70);
+            this.add(dory);
+            direction *= -1;
+        }
+
+        direction = 1;
+        for (let i = 0; i < fishZPositions.length; i++) {
+            const x = fishXPositions[Math.floor(Math.random() * fishXPositions.length)];
+            const nemo = new Nemo(this, x * direction, -2, fishZPositions[i] + 55);
+            this.add(nemo);
+            direction *= -1;
+        }
+
+        for (let i = 0; i < 20; i++) {
+            const x = fishXPositions[Math.floor(Math.random() * fishXPositions.length)];
+            const ray = new Stingray(this, x * direction, -4, fishZPositions[i] + 73);
+            this.add(ray);
+            direction *= -1;
+        }
+
+        // for (let i = 0; i < 5; i++) {
+        //     const x = fishXPositions[Math.floor(Math.random() * fishXPositions.length)];
+        //     const ray = new Stingray(this, x * direction, -4, fishZPositions[i] + 61);
+        //     this.add(ray);
+        //     direction *= -1;
+        // }
+
+        for (let i = 0; i < 10; i++) {
+            const x = fishXPositions[Math.floor(Math.random() * fishXPositions.length)];
+            const whale = new Whale(this, x * direction, -3, fishZPositions[i] + 90);
+            this.add(whale);
+            direction *= -1;
         }
     }
 }

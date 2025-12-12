@@ -1,49 +1,37 @@
 import { Group, Box3 } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { TWEEN } from 'three/examples/jsm/libs/tween.module.min.js';
-import MODEL from './Deer.glb';
+import MODEL from './Acorn.glb';
 import { CAMERA_Z_POS, CAMERA_OFFSET, TerrainPhase } from '../../config';
-import { getRandomObstacleX } from '../../utils/utils';
+import { getRandomRewardX } from '../../utils/utils';
 import { TerrainController } from '../TerrainController';
 import { RunningScene } from 'scenes';
-import { FlyingAcorn } from 'objects'
 
-class Deer extends Group {
-    constructor(parent, x, y, z, hasAcorn) {
+class FlyingAcorn extends Group {
+    constructor(parent, x, y, z, deer) {
         // Call parent Group() constructor
         super();
 
         // Init state
         this.state = {
-            inScene: true,
-            pastEnd: false,
-            path: parent.getObjectByName('swimmingPath'),
-            hasAcorn: hasAcorn
+            deer: deer
         };
 
-        if (hasAcorn) {
-            this.acorn = new FlyingAcorn(parent, x, 5, z, this);
-            parent.add(this.acorn);
-            parent.rewards.push(this.acorn);
-            // parent.allRunRewards.push(this.acorn);
-        }
+        this.parent = parent;
 
         this.terrainController = parent.terrainController;
 
         // Load object
         const loader = new GLTFLoader();
 
-        this.name = 'deer';
         loader.load(MODEL, (gltf) => {
             this.add(gltf.scene);
         });
 
-        const scaleFactor = 0.05;
+        const scaleFactor = 0.5;
         this.scale.set(scaleFactor, scaleFactor, scaleFactor);
         this.position.set(x, y, z);
-
-        // Add self to parent's update list
-        parent.addToUpdateList(this);
+        this.visible = true;
     }
 
     update(timeStamp) {
@@ -55,28 +43,29 @@ class Deer extends Group {
                 this.position.y = -100;
             }
         } else {
-            // generate deer
+            // generate acorn
             if (!inScene) {
                 this.visible = true;
                 this.state.inScene = true;
-                this.position.y = 1.8;
-                this.position.z -= 100;
+                this.position.y = 5;
+                this.position.z = this.state.deer.position.z;
             }
+            this.visible = true;
             this.position.z += this.parent.state.gameSpeed * 0.8;
-            if (this.position.z > CAMERA_Z_POS + CAMERA_OFFSET) {
-                this.position.z -= Math.floor(Math.random() * 50) + 200;
-                this.position.x = getRandomObstacleX();
-
-                if (this.parent.obstacles_hit.has(this.uuid)) {
-                    this.parent.obstacles_hit.delete(this.uuid);
-                }
-            }
-            if (this.position.z < this.getPathEnd()) {
+            if (this.position.z > CAMERA_Z_POS - CAMERA_OFFSET) {
                 this.visible = false;
             }
-        }
-        if (this.state.hasAcorn) {
-            this.acorn.update();
+            if (this.position.z > CAMERA_Z_POS + CAMERA_OFFSET) {
+                this.position.z = this.state.deer.position.z;
+                this.position.x =this.state.deer.position.x;
+
+                if (this.parent.rewards_hit.has(this.uuid)) {
+                    this.parent.rewards_hit.delete(this.uuid);
+                }
+            }
+            if (!this.state.deer.visible) {
+                this.visible = false;
+            }
         }
     }
 
@@ -84,11 +73,6 @@ class Deer extends Group {
         const bbox = new Box3().setFromObject(this);
         return bbox.intersectsBox(otherBBox);
     }
-
-    getPathEnd() {
-        let bbox = new Box3().setFromObject(this.state.path.children[0]);
-        return bbox.max.z + 10;
-    }
 }
 
-export default Deer;
+export default FlyingAcorn;

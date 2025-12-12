@@ -16,3 +16,7 @@ export * from './Shark';
 export * from './Boulder';
 export * from './Bicycle';
 export * from './Bird';
+export * from './Acorn';
+export * from './FlyingAcorn';
+export * from './Seahorse';
+export * from './Treasure';

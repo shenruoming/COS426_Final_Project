@@ -1,15 +1,14 @@
 import { Group, Box3 } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { TWEEN } from 'three/examples/jsm/libs/tween.module.min.js';
-import MODEL from './Deer.glb';
+import MODEL from './Treasure.glb';
 import { CAMERA_Z_POS, CAMERA_OFFSET, TerrainPhase } from '../../config';
-import { getRandomObstacleX } from '../../utils/utils';
+import { getRandomRewardX, sinusoid } from '../../utils/utils';
 import { TerrainController } from '../TerrainController';
 import { RunningScene } from 'scenes';
-import { FlyingAcorn } from 'objects'
 
-class Deer extends Group {
-    constructor(parent, x, y, z, hasAcorn) {
+class Treasure extends Group {
+    constructor(parent, x, y, z) {
         // Call parent Group() constructor
         super();
 
@@ -17,30 +16,25 @@ class Deer extends Group {
         this.state = {
             inScene: true,
             pastEnd: false,
-            path: parent.getObjectByName('swimmingPath'),
-            hasAcorn: hasAcorn
+            path: parent.getObjectByName('bikingPath'),
+            startTime: new Date() / 1000
         };
-
-        if (hasAcorn) {
-            this.acorn = new FlyingAcorn(parent, x, 5, z, this);
-            parent.add(this.acorn);
-            parent.rewards.push(this.acorn);
-            // parent.allRunRewards.push(this.acorn);
-        }
 
         this.terrainController = parent.terrainController;
 
         // Load object
         const loader = new GLTFLoader();
 
-        this.name = 'deer';
+        this.name = 'treasure';
         loader.load(MODEL, (gltf) => {
             this.add(gltf.scene);
         });
 
-        const scaleFactor = 0.05;
+        const scaleFactor = 2;
         this.scale.set(scaleFactor, scaleFactor, scaleFactor);
         this.position.set(x, y, z);
+        this.rotation.y = - Math.PI / 2
+        this.visible = false;
 
         // Add self to parent's update list
         parent.addToUpdateList(this);
@@ -48,35 +42,36 @@ class Deer extends Group {
 
     update(timeStamp) {
         let inScene = this.state.inScene;
-        if (this.terrainController.characterPhase != TerrainPhase.RUNNING) {
+        if (this.visible) {
+            this.position.y = sinusoid(0.8, -2, 1, 0);
+        }
+        if (this.terrainController.characterPhase != TerrainPhase.SWIMMING) {
             if (inScene) {
                 this.visible = false;
                 this.state.inScene = false;
                 this.position.y = -100;
             }
         } else {
-            // generate deer
+            // generate treasure
             if (!inScene) {
                 this.visible = true;
                 this.state.inScene = true;
-                this.position.y = 1.8;
+                this.position.y = 1;
                 this.position.z -= 100;
             }
             this.position.z += this.parent.state.gameSpeed * 0.8;
             if (this.position.z > CAMERA_Z_POS + CAMERA_OFFSET) {
                 this.position.z -= Math.floor(Math.random() * 50) + 200;
-                this.position.x = getRandomObstacleX();
+                this.position.x = getRandomRewardX();
+                this.visible = true;
 
-                if (this.parent.obstacles_hit.has(this.uuid)) {
-                    this.parent.obstacles_hit.delete(this.uuid);
+                if (this.parent.rewards_hit.has(this.uuid)) {
+                    this.parent.rewards_hit.delete(this.uuid);
                 }
             }
             if (this.position.z < this.getPathEnd()) {
                 this.visible = false;
             }
-        }
-        if (this.state.hasAcorn) {
-            this.acorn.update();
         }
     }
 
@@ -91,4 +86,4 @@ class Deer extends Group {
     }
 }
 
-export default Deer;
+export default Treasure;

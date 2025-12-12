@@ -125,34 +125,18 @@ beginContentButton.innerHTML = 'BEGIN';
 beginContent.appendChild(beginContentButton);
 
 // Set up countdown
-var countDownDiv = document.createElement('div');
-countDownDiv.id = 'countdown';
-document.body.appendChild(countDownDiv);
-let countDownNumber = document.createElement('h1');
-countDownDiv.appendChild(countDownNumber);
+// var countDownDiv = document.createElement('div');
+// countDownDiv.id = 'countdown';
+// document.body.appendChild(countDownDiv);
+// let countDownNumber = document.createElement('h1');
+// countDownDiv.appendChild(countDownNumber);
 
 // Begin game
 beginContentButton.onclick = function () {
     beginContainer.style.display = 'none';
-    countDownDiv.style.display = 'flex';
+    // countDownDiv.style.display = 'flex';
+    // scene.unpause();
     let timeleft = 3;
-    // let countDownInterval = setInterval(function () {
-    //     if (timeleft < 0) {
-    //         countDownDiv.style.display = 'none';
-    //         clearInterval(countDownInterval);
-    //         countDownNumber.innerText = '';
-    //         countDownDiv.style.display = 'none';
-    //     } else if (timeleft == 0) {
-    //         countDownNumber.innerText = 'Go!';
-    //         go.play();
-    //         scene.state.newGameStarted = true;
-    //         newGameStarted = true;
-    //     } else {
-    //         countDownNumber.innerText = timeleft;
-    //         countdown.play();
-    //     }
-    //     timeleft -= 1;
-    // }, 1000);
 };
 
 // Set up lives
@@ -233,6 +217,19 @@ const onAnimationFrameHandler = (timeStamp) => {
         lives -= 1;
         heartDiv.removeChild(heartDiv.lastChild);
     }
+    const firstReward = scene.getRewardCollision();
+    if (firstReward != null && lives < 3) {
+        lives += 1;
+        firstReward.visible = false;
+        console.log("got reward");
+        let heartImg = document.createElement('img');
+        heartImg.src = heartLink;
+        heartDiv.appendChild(heartImg);
+    }
+
+    // remove rewards colliding with obstacles
+    scene.handleRewardObstacleCollisions();
+
     // game over if lives are 0
     if (lives <= 0) {
         // if (!gameOver) {
@@ -260,7 +257,6 @@ window.addEventListener('resize', windowResizeHandler, false);
 window.addEventListener('keydown', function (e) {
     const key = e.key;
     const player = scene.currentCharacter;
-    // const player = scene.getObjectByName('runner');
     const paused = scene.state.paused;
     if (key.toLowerCase() == 'p') {
         if (paused) {

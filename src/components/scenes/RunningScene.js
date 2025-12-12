@@ -1,5 +1,5 @@
 import * as Dat from 'dat.gui';
-import { Scene, Color, AxesHelper, Box3 } from 'three';
+import { Scene, Color, AxesHelper, Box3, TextureLoader, RepeatWrapping} from 'three';
 import {
     RunningPath,
     SwimmingPath,
@@ -19,11 +19,31 @@ import {
 import { BasicLights } from 'lights';
 import { TerrainPhase, obstacleXPositions } from '../config';
 import { getRandomObstacleX, getRandomSideX } from '../utils/utils';
+import DAYLIGHT from '../../assets/daylight.jpg';
+import STARRY from '../../assets/starry_night.jpg';
+import splash from '../../sounds/finaldive.wav';
+import deer from '../../sounds/deer.wav';
+
+// Add sounds
+const splashSound = new Audio(splash);
+splashSound.load();
+
+const deerSound = new Audio(deer);
+deerSound.load();
 
 class RunningScene extends Scene {
     constructor() {
         // Call parent Scene() constructor
         super();
+        // var texture  = new TextureLoader().load(DAYLIGHT);
+        // texture.wrapS = RepeatWrapping;
+        // texture.wrapT = RepeatWrapping;
+        // this.state.textureList.add(texture);
+    
+        // var textureNight  = new TextureLoader().load(STARRY);
+        // textureNight.wrapS = RepeatWrapping;
+        // textureNight.wrapT = RepeatWrapping;
+        // this.state.textureList.add(textureNight);
 
         // Init state
         this.state = {
@@ -34,7 +54,9 @@ class RunningScene extends Scene {
             gameSpeed: 0,
             prevGameSpeed: 0.5,
             paused: true,
-            gameOver: false
+            gameOver: false,
+            startTime: Date.now(),
+            skyMode: 0
         };
 
         // other backgrounds
@@ -118,7 +140,7 @@ class RunningScene extends Scene {
     }
 
     update(timeStamp) {
-        const { updateList, terrainUpdateList } = this.state;
+        const { updateList, terrainUpdateList, startTime, skyMode, textureList} = this.state;
         this.terrainController.updateTerrain();
 
         // for new terrain... switch character
@@ -133,7 +155,44 @@ class RunningScene extends Scene {
         for (const obj of terrainUpdateList) {
             obj.update(timeStamp, this.terrainController);
         }
+
+        const currTime = Date.now() / 1000;
+        const elapsedTime = currTime - (this.state.startTime / 1000);
+
+        // if even that means it's day time
+        // if (Math.floor(elapsedTime / 10.0) % 2 == 0 && skyMode != 0) {
+        //     this.background = textureList[0];
+        //     this.state.skyMode = 0;
+        // } else if (Math.floor(elapsedTime / 10.0) % 2 == 1 && skyMode == 0) { // else must be night
+        //     this.background = textureList[1];
+        //     this.state.skyMode = 1;
+        // }
     }
+
+    // blendImage(image1, image2) {
+        
+    // }
+
+    // updateBackground() {
+    //     const {startTime} = this.state;
+
+    //     const currTime = Date.now() / 1000;
+    //     const elapsedTime = currTime - (startTime / 1000);
+
+    //     // if even that means it's day time
+    //     if (Math.floor(elapsedTime / 20.0) % 2 === 0) {
+    //         var texture  = new THREE.TextureLoader().load(DAYLIGHT);
+    //         texture.wrapS = THREE.RepeatWrapping;
+    //         texture.wrapT = THREE.RepeatWrapping;
+    //         this.background = texture;
+    //     } else { // else must be night
+    //         var texture  = new THREE.TextureLoader().load(STARRY);
+    //         texture.wrapS = THREE.RepeatWrapping;
+    //         texture.wrapT = THREE.RepeatWrapping;
+    //         this.background = texture;
+    //     }
+    // }
+    
 
     pause() {
         this.state.paused = true;
@@ -159,7 +218,15 @@ class RunningScene extends Scene {
             }
             if (obstacle.collidesWith(playerBoundingBox) && !this.obstacles_hit.has(obstacle.uuid)) {
                 this.obstacles_hit.add(obstacle.uuid);
+                if (this.terrainController.characterPhase == 2) {
+                    let dingClone = splashSound.cloneNode();
+                    dingClone.play();
+                } else if (this.terrainController.characterPhase == 0) {
+                    let clone = deerSound.cloneNode();
+                    clone.play();
+                }
                 return obstacle;
+            
             }
         }
         return null;

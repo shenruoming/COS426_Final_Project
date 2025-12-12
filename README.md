@@ -13,7 +13,7 @@ To build this project, you will need to use Node Package Manager (npm) to manage
 
 Node Package Manager, which is the world's largest software registry and supports over one million open source JavaScript packages and libraries, runs in a NodeJS runtime. The NodeJS runtime is essentially a port of Google Chrome's JavaScript V8 engine that will run directly in your terminal (instead of within a browser).
 
-Before you begin, you will need to install [Node and npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm). Then, open a new terminal instance, set your working directory to the root of the project, and run `npm install`.
+Before you begin, you will need to install [Node and npm](n). Then, open a new terminal instance, set your working directory to the root of the project, and run `npm install`.
 
 **Note on node versions:** The current version of this scaffolding code is known to work with older versions of node such including `v14.17.0` and `v16.20.2`, but may be broken with newer versions (like 18.3.0 and beyond). Therefore recommend starting from one of the known stable versions. It is easy to switch among different versions of node on your computer by installing [Node Version Manager (nvm)](https://github.com/nvm-sh/nvm).
 

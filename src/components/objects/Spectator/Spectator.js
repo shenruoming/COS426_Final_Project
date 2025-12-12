@@ -91,7 +91,7 @@ class Spectator extends Group {
         let inScene = this.state.inScene;
         if (this.terrainController.characterPhase != TerrainPhase.RUNNING) {
             if (inScene) {
-                this.visible = false;
+                this.element.visible = false;
                 this.state.inScene = false;
                 this.element.position.y = -100;
             }
@@ -100,7 +100,7 @@ class Spectator extends Group {
 
         // generate spectator
         if (!inScene) {
-            this.visible = true;
+            this.element.visible = true;
             this.state.inScene = true;
             this.element.position.z -= 100;
         }
@@ -111,7 +111,7 @@ class Spectator extends Group {
             this.element.position.z -= 300;
 
             if (this.element.position.z < this.getPathEnd()) {
-                this.visible = false;
+                this.element.visible = false;
             }
         }
     }

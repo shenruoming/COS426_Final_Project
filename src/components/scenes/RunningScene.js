@@ -485,10 +485,10 @@ class RunningScene extends Scene {
             this.add(nemo);
             direction *= -1;
         }
-
-        for (let i = 0; i < 20; i++) {
+        const rayZPositions = [-10, -60, -150, -90, -210, -240, -20, -40, -200, -120, -140, -170];
+        for (let i = 0; i < rayZPositions.length; i++) {
             const x = fishXPositions[Math.floor(Math.random() * fishXPositions.length)];
-            const ray = new Stingray(this, x * direction, -4, fishZPositions[i] + 73);
+            const ray = new Stingray(this, x * direction, -4, rayZPositions[i] + 73);
             this.add(ray);
             direction *= -1;
         }
@@ -500,9 +500,9 @@ class RunningScene extends Scene {
         //     direction *= -1;
         // }
 
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < rayZPositions.length; i++) {
             const x = fishXPositions[Math.floor(Math.random() * fishXPositions.length)];
-            const whale = new Whale(this, x * direction, -3, fishZPositions[i] + 90);
+            const whale = new Whale(this, x * direction, -3, rayZPositions[i] + 90);
             this.add(whale);
             direction *= -1;
         }

@@ -93,7 +93,6 @@ class Spectator extends Group {
             if (inScene) {
                 this.element.visible = false;
                 this.state.inScene = false;
-                this.element.position.y = 0.4;
             }
             return;
         }
@@ -103,7 +102,6 @@ class Spectator extends Group {
             this.element.visible = true;
             this.state.inScene = true;
             this.element.position.z -= 100;
-            this.element.position.y = 0;
         }
 
         this.jump(timeStamp);

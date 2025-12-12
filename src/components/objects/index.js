@@ -24,3 +24,4 @@ export * from './Nest';
 export * from './MTree';
 export * from './Bush';
 export * from './TreeM';
+export * from './Lightning';

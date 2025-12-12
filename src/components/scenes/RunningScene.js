@@ -27,7 +27,8 @@ import {
     Treasure,
     MTree,
     Bush,
-    Tree
+    Tree,
+    Lightning
 } from 'objects';
 import { BasicLights } from 'lights';
 import { TerrainPhase, obstacleXPositions } from '../config';
@@ -191,6 +192,7 @@ class RunningScene extends Scene {
             this.allRunRewards.push(acorn);
         }
 
+
         // add birdNest (running rewards)
         const nestZPositions = [-20, -40, -70, -90, -110, -80, -50, -100, -140, -160, -180, -210,
             -240, -270, -240,];
@@ -241,6 +243,18 @@ class RunningScene extends Scene {
             this.rewards.push(treasure);
             this.allSwimRewards.push(treasure);
         }
+
+        // add acorns (running rewards)
+        const lightningPos = [-15, -85, -100, -125];
+        for (let i = 0; i < 3; i++) {
+            const x = getRandomRewardX() * 2;
+            const lightning = new Lightning(this, x, 1, lightningPos[i]);
+            this.add(lightning);
+            this.rewards.push(lightning);
+            this.allBikeRewards.push(lightning);
+        }
+
+        
 
         // add running spectators to scene
         for (let i = 0; i < 5; i++) {

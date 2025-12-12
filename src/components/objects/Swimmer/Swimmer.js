@@ -9,6 +9,10 @@ import {
 } from 'three';
 import { TWEEN } from 'three/examples/jsm/libs/tween.module.min.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import dive from '../../../sounds/finaldive.wav';
+
+const diveSound = new Audio(dive);
+diveSound.load();
 
 const Colors = {
     cherry: 0xe35d6a,
@@ -409,6 +413,8 @@ class Swimmer extends Group {
          */
         this.onDownKeyPressed = function () {
             self.queuedActions.push('ArrowDown');
+            const diveClone = diveSound.cloneNode();
+            diveClone.play();
         };
 
         /**

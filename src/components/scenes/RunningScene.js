@@ -21,7 +21,7 @@ import { TerrainPhase, obstacleXPositions } from '../config';
 import { getRandomObstacleX, getRandomSideX } from '../utils/utils';
 import DAYLIGHT from '../../assets/daylight.jpg';
 import STARRY from '../../assets/starry_night.jpg';
-import splash from '../../sounds/finaldive.wav';
+import splash from '../../sounds/shark.wav';
 import deer from '../../sounds/deer.wav';
 import squawk from '../../sounds/squawk.wav';
 
@@ -39,15 +39,6 @@ class RunningScene extends Scene {
     constructor() {
         // Call parent Scene() constructor
         super();
-        // var texture  = new TextureLoader().load(DAYLIGHT);
-        // texture.wrapS = RepeatWrapping;
-        // texture.wrapT = RepeatWrapping;
-        // this.state.textureList.add(texture);
-    
-        // var textureNight  = new TextureLoader().load(STARRY);
-        // textureNight.wrapS = RepeatWrapping;
-        // textureNight.wrapT = RepeatWrapping;
-        // this.state.textureList.add(textureNight);
 
         // Init state
         this.state = {
@@ -58,9 +49,7 @@ class RunningScene extends Scene {
             gameSpeed: 0,
             prevGameSpeed: 0.7,
             paused: true,
-            gameOver: false,
-            startTime: Date.now(),
-            skyMode: 0
+            gameOver: false
         };
 
         // other backgrounds
@@ -163,39 +152,8 @@ class RunningScene extends Scene {
         const currTime = Date.now() / 1000;
         const elapsedTime = currTime - (this.state.startTime / 1000);
 
-        // if even that means it's day time
-        // if (Math.floor(elapsedTime / 10.0) % 2 == 0 && skyMode != 0) {
-        //     this.background = textureList[0];
-        //     this.state.skyMode = 0;
-        // } else if (Math.floor(elapsedTime / 10.0) % 2 == 1 && skyMode == 0) { // else must be night
-        //     this.background = textureList[1];
-        //     this.state.skyMode = 1;
-        // }
     }
 
-    // blendImage(image1, image2) {
-        
-    // }
-
-    // updateBackground() {
-    //     const {startTime} = this.state;
-
-    //     const currTime = Date.now() / 1000;
-    //     const elapsedTime = currTime - (startTime / 1000);
-
-    //     // if even that means it's day time
-    //     if (Math.floor(elapsedTime / 20.0) % 2 === 0) {
-    //         var texture  = new THREE.TextureLoader().load(DAYLIGHT);
-    //         texture.wrapS = THREE.RepeatWrapping;
-    //         texture.wrapT = THREE.RepeatWrapping;
-    //         this.background = texture;
-    //     } else { // else must be night
-    //         var texture  = new THREE.TextureLoader().load(STARRY);
-    //         texture.wrapS = THREE.RepeatWrapping;
-    //         texture.wrapT = THREE.RepeatWrapping;
-    //         this.background = texture;
-    //     }
-    // }
     
 
     pause() {

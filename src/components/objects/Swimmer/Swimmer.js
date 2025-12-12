@@ -208,7 +208,7 @@ class Swimmer extends Group {
             );
             self.leftLeg = self.createLimb(
                 50,
-                170,
+                80,
                 50,
                 self.shortsColor,
                 -50,

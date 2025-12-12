@@ -4,6 +4,10 @@ import {
 } from 'three';
 import { TWEEN } from 'three/examples/jsm/libs/tween.module.min.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import run from '../../../sounds/runjump.wav';
+
+const runSound = new Audio(run);
+runSound.load();
 
 const Colors = {
     cherry: 0xe35d6a,
@@ -279,6 +283,7 @@ class Runner extends Group {
             // If the character is jumping, update the height of the character.
             // Otherwise, the character continues running.
             if (self.isJumping) {
+
                 var jumpClock = currentTime - self.jumpStartTime;
                 self.element.position.y =
                     self.jumpHeight *
@@ -366,6 +371,8 @@ class Runner extends Group {
          */
         this.onUpKeyPressed = function () {
             self.queuedActions.push('ArrowUp');
+            let dingClone = runSound.cloneNode();
+            dingClone.play();
         };
 
         /**

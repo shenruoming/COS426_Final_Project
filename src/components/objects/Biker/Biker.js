@@ -4,6 +4,10 @@ import {
 } from 'three';
 import { TWEEN } from 'three/examples/jsm/libs/tween.module.min.js';
 import { Bicycle } from 'objects';
+import bike from '../../../sounds/bike_jump.wav';
+
+const bikeSound = new Audio(bike);
+bikeSound.load();
 
 const Colors = {
     cherry: 0xe35d6a,
@@ -371,6 +375,8 @@ class Biker extends Group {
          */
         this.onUpKeyPressed = function () {
             self.queuedActions.push('ArrowUp');
+            const bikeClone = bikeSound.cloneNode();
+            bikeClone.play();
             // bike.queuedActions.push('ArrowUp');
         };
 

@@ -26,7 +26,12 @@ import {
     Treasure,
 } from 'objects';
 import { BasicLights } from 'lights';
-import { TerrainPhase, obstacleXPositions } from '../config';
+import {
+    TerrainPhase,
+    obstacleXPositions,
+    CAMERA_Z_POS,
+    CAMERA_OFFSET,
+} from '../config';
 import {
     getRandomObstacleX,
     getRandomSideX,
@@ -60,7 +65,7 @@ class RunningScene extends Scene {
             updateList: [],
             terrainUpdateList: [],
             gameSpeed: 0,
-            prevGameSpeed: 0.3,
+            prevGameSpeed: 2.0,
             paused: true,
             gameOver: false,
             backgroundColors: [
@@ -201,10 +206,33 @@ class RunningScene extends Scene {
             this.allSwimRewards.push(treasure);
         }
 
-        // add running spectators to scene
-        for (let i = 0; i < 5; i++) {
-            const spectator = new Spectator(this, -6, 1, 10 * (i + 1) - 30);
+        // for spectator's random x position
+        function getRandomInt(min, max) {
+            const minCeiled = Math.ceil(min);
+            const maxFloored = Math.floor(max);
+            return (
+                Math.floor(Math.random() * (maxFloored - minCeiled + 1)) +
+                minCeiled
+            );
+        }
+
+        const num_spectators = 150;
+        // const spectatorZPositions = [-10, -60, -150, -90, -210, -240];
+        for (let i = 0; i < num_spectators; i++) {
+            // random side and random x-location
+            const side = getRandomSideX();
+            const x = 0;
+            if (side == -6) {
+                x = getRandomInt(-11, -6);
+            } else if (side == 6) {
+                x = getRandomInt(6, 12);
+            }
+            const z = -(i / num_spectators) * 400 + 10;
+            const y = 0.4;
+
+            const spectator = new Spectator(this, x, y, z, side);
             this.add(spectator);
+            // this.spectators.push(spectator);
         }
 
         // for debugging

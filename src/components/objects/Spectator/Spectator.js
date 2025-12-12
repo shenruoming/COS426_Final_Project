@@ -1,30 +1,81 @@
 import * as THREE from 'three';
 import { Group, Box3 } from 'three';
-import { sinusoid, createCylinder, createBox, createGroup, createLimb } from '../../utils/utils';
+import {
+    sinusoid,
+    createCylinder,
+    createBox,
+    createGroup,
+    createLimb,
+} from '../../utils/utils';
 import { TerrainPhase, CAMERA_Z_POS, CAMERA_OFFSET } from '../../config';
 
 const Colors = {
     cherry: 0xe35d6a,
     blue: 0x1560bd,
-    white: 0xd8d0d1,
     black: 0x000000,
+    white: 0xd8d0d1,
     brown: 0x59332e,
     peach: 0xedba9d,
     yellow: 0xffff00,
     olive: 0x556b2f,
     purple: 0xaf69ee,
     lightblue: 0x6693f5,
+    orange: 0xffba00,
+    neon: 0x82ff82,
+    pink: 0xff4dd9,
+    turquoise: 0x4dff8e,
+    beige: 0xe0ac69,
 };
+
+const clothescolors = [
+    Colors.cherry,
+    Colors.blue,
+    Colors.white,
+    Colors.yellow,
+    Colors.olive,
+    Colors.purple,
+    Colors.orange,
+    Colors.neon,
+    Colors.pink,
+    Colors.turquoise,
+];
+
+const skintones = [Colors.brown, Colors.peach, Colors.beige];
+const hairColors = [Colors.brown, Colors.yellow, Colors.black, Colors.cherry];
+
 const deg2Rad = Math.PI / 180;
 
+function getRandomColor() {
+    const randomIndex = Math.floor(Math.random() * clothescolors.length);
+    return clothescolors[randomIndex];
+}
+function getRandomSkin() {
+    const randomIndex = Math.floor(Math.random() * skintones.length);
+    return skintones[randomIndex];
+}
+function getRandomHair() {
+    const randomIndex = Math.floor(Math.random() * hairColors.length);
+    return hairColors[randomIndex];
+}
+
 class Spectator extends Group {
-    constructor(parent, x, y, z) {
+    constructor(parent, x, y, z, side) {
         super();
 
         // init state (nothing for now)
         this.state = {
             inScene: true,
             path: parent.getObjectByName('swimmingPath'),
+        };
+
+        this.jumpState = {
+            frequency: 4.0,
+            maxHeight: 0.9,
+            baseY: y,
+            side: side,
+            maxKneeBend: 30 * deg2Rad,
+            maxArmSwing: 20 * deg2Rad,
+            timeOffset: Math.random() * 1000,
         };
 
         this.terrainController = parent.terrainController;
@@ -38,26 +89,77 @@ class Spectator extends Group {
 
     update(timeStamp) {
         let inScene = this.state.inScene;
-        this.position.y = sinusoid(0.3, 0.5, 1.2, 0);
         if (this.terrainController.characterPhase != TerrainPhase.RUNNING) {
             if (inScene) {
                 this.visible = false;
                 this.state.inScene = false;
+                this.position.y = -100;
             }
+            return;
+        }
+
+        // generate spectator
+        if (!inScene) {
+            this.visible = true;
+            this.state.inScene = true;
+        }
+
+        this.jump(timeStamp);
+        this.position.z += this.parent.state.gameSpeed;
+
+        if (this.position.y < -3) {
+            this.visible = false;
         } else {
-            if (!inScene) {
-                this.visible = true;
-                this.state.inScene = true;
-            }
-            this.position.z += this.parent.state.gameSpeed;
-            if (this.position.z > CAMERA_Z_POS + CAMERA_OFFSET) {
-                this.position.z -= 300;
-            }
+            this.visible = true;
+        }
+
+        if (this.position.z > 350) {
+            this.position.z -= 300;
+
             if (this.position.z < this.getPathEnd()) {
                 this.visible = false;
             }
         }
     }
+
+    jump(timeStamp) {
+        const {
+            frequency,
+            maxHeight,
+            baseY,
+            side,
+            maxKneeBend,
+            maxArmSwing,
+            timeOffset,
+        } = this.jumpState;
+
+        const time = (timeStamp / 1000 + timeOffset) * frequency;
+
+        // y position of jump and prevent sinking in ground
+        const jumpFactor = Math.abs(Math.sin(time));
+        this.position.y = baseY + jumpFactor * maxHeight;
+
+        // lower leg bending
+        const kneeBend = jumpFactor * maxKneeBend;
+        if (side == 6) {
+            this.leftLowerLeg.rotation.x = kneeBend;
+            this.rightLowerLeg.rotation.x = kneeBend;
+        } else if (side == -6) {
+            this.leftLowerLeg.rotation.x = -kneeBend;
+            this.rightLowerLeg.rotation.x = -kneeBend;
+        }
+
+        // arms swing
+        const armSwing = Math.cos(time) * maxArmSwing;
+
+        // rotating arms swinging
+        this.leftArm.rotation.z = -10 * deg2Rad + armSwing;
+        this.rightArm.rotation.z = 10 * deg2Rad - armSwing;
+
+        this.leftArm.rotation.x = -180 * deg2Rad + Math.sin(time * 0.5) * 0.3;
+        this.rightArm.rotation.x = -180 * deg2Rad - Math.sin(time * 0.5) * 0.3;
+    }
+
     getPathEnd() {
         let bbox = new Box3().setFromObject(this.state.path.children[0]);
         return bbox.max.z + 10;
@@ -68,10 +170,10 @@ class Spectator extends Group {
         var self = this;
 
         // Character defaults.
-        this.skinColor = Colors.peach;
-        this.hairColor = Colors.brown;
-        this.shirtColor = Colors.purple;
-        this.shortsColor = Colors.lightblue;
+        this.skinColor = getRandomSkin();
+        this.hairColor = getRandomHair();
+        this.shirtColor = getRandomColor();
+        this.shortsColor = getRandomColor();
         this.stepFreq = 2;
 
         // Initialize the character.
@@ -80,7 +182,7 @@ class Spectator extends Group {
         self.element.position.x = x;
         self.element.position.z = z;
         self.element.position.y = y;
-        self.element.rotation.y = - Math.PI / 2;
+        self.element.rotation.y = -Math.PI / 2;
 
         /**
          * Builds the character in depth-first order. The parts of are
@@ -158,15 +260,7 @@ class Spectator extends Group {
             self.head.add(self.leftPigtail1);
             self.head.add(self.leftPigtail2);
 
-            self.torso = createBox(
-                150,
-                190,
-                40,
-                self.shirtColor,
-                0,
-                100,
-                0
-            );
+            self.torso = createBox(150, 190, 40, self.shirtColor, 0, 100, 0);
 
             self.leftLowerArm = createLimb(
                 20,
@@ -208,6 +302,11 @@ class Spectator extends Group {
             );
             self.rightArm.add(self.rightLowerArm);
 
+            self.leftArm.rotation.x = -180 * deg2Rad;
+            self.rightArm.rotation.x = -180 * deg2Rad;
+            self.leftArm.rotation.z = -10 * deg2Rad;
+            self.rightArm.rotation.z = 10 * deg2Rad;
+
             self.leftLowerLeg = createLimb(
                 30,
                 200,
@@ -218,13 +317,13 @@ class Spectator extends Group {
                 0
             );
             self.leftLeg = createLimb(
-                30,
+                40,
                 170,
                 50,
                 self.shortsColor,
                 -50,
-                -10,
-                30
+                20,
+                5
             );
             self.leftLeg.add(self.leftLowerLeg);
 
@@ -238,13 +337,13 @@ class Spectator extends Group {
                 0
             );
             self.rightLeg = createLimb(
-                30,
+                40,
                 170,
                 50,
                 self.shortsColor,
                 50,
-                -10,
-                30
+                20,
+                5
             );
             self.rightLeg.add(self.rightLowerLeg);
 
@@ -256,10 +355,9 @@ class Spectator extends Group {
             self.element.add(self.leftLeg);
             self.element.add(self.rightLeg);
 
-            const scaleFactor = 0.007;
+            const scaleFactor = 0.005;
             self.element.scale.set(scaleFactor, scaleFactor, scaleFactor);
             self.add(self.element);
-
         }
     }
 }

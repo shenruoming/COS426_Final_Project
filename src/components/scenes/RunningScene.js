@@ -1,5 +1,12 @@
 import * as Dat from 'dat.gui';
-import { Scene, Color, AxesHelper, Box3, TextureLoader, RepeatWrapping} from 'three';
+import {
+    Scene,
+    Color,
+    AxesHelper,
+    Box3,
+    TextureLoader,
+    RepeatWrapping,
+} from 'three';
 import {
     RunningPath,
     SwimmingPath,
@@ -20,7 +27,11 @@ import {
 } from 'objects';
 import { BasicLights } from 'lights';
 import { TerrainPhase, obstacleXPositions } from '../config';
-import { getRandomObstacleX, getRandomSideX, getRandomRewardX } from '../utils/utils';
+import {
+    getRandomObstacleX,
+    getRandomSideX,
+    getRandomRewardX,
+} from '../utils/utils';
 import DAYLIGHT from '../../assets/daylight.jpg';
 import STARRY from '../../assets/starry_night.jpg';
 import splash from '../../sounds/shark.wav';
@@ -210,7 +221,13 @@ class RunningScene extends Scene {
     }
 
     update(timeStamp) {
-        const { updateList, terrainUpdateList, startTime, skyMode, textureList} = this.state;
+        const {
+            updateList,
+            terrainUpdateList,
+            startTime,
+            skyMode,
+            textureList,
+        } = this.state;
         this.terrainController.updateTerrain();
 
         // for new terrain... switch character
@@ -243,6 +260,7 @@ class RunningScene extends Scene {
 
         // background color
         this.background = interpolatedColor;
+        this.fog.color = interpolatedColor;
 
         if (t === 1.0) {
             // next fade cycle
@@ -259,11 +277,8 @@ class RunningScene extends Scene {
         }
 
         const currTime = Date.now() / 1000;
-        const elapsedTime = currTime - (this.state.startTime / 1000);
-
+        const elapsedTime = currTime - this.state.startTime / 1000;
     }
-
-    
 
     pause() {
         this.state.paused = true;
@@ -306,7 +321,6 @@ class RunningScene extends Scene {
                     squawkClone.play();
                 }
                 return obstacle;
-            
             }
         }
         return null;

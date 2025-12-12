@@ -89,6 +89,10 @@ let bikeImg = document.createElement('img');
 bikeImg.src = bikeLink;
 bikeDiv.appendChild(bikeImg);
 
+document.body.appendChild(bikeDiv);
+document.body.appendChild(runDiv);
+document.body.appendChild(swimDiv);
+
 let beginContentDescription = document.createElement('p');
 beginContentDescription.innerHTML =
     'Have you ever dreamt of conquering a triathlon? Getting off the couch and hitting the pavement, swimming the miles, and cycling the paths? But you never got to it? This is your chance to make up for your lack of athleticism. Do it from the couch, do it from your bed, do it in class. <br>Now the question is... how far can you go?';
@@ -156,6 +160,9 @@ beginContent.appendChild(beginContentButton);
 // Begin game
 beginContentButton.onclick = function () {
     beginContainer.style.display = 'none';
+    bikeDiv.style.display = 'none';
+    swimDiv.style.display = 'none';
+    runDiv.style.display = 'none';
     // countDownDiv.style.display = 'flex';
     scene.unpause();
     let timeleft = 3;

@@ -93,7 +93,7 @@ class Spectator extends Group {
             if (inScene) {
                 this.visible = false;
                 this.state.inScene = false;
-                this.position.y = -100;
+                this.element.position.y = -100;
             }
             return;
         }
@@ -102,21 +102,15 @@ class Spectator extends Group {
         if (!inScene) {
             this.visible = true;
             this.state.inScene = true;
+            this.element.position.z -= 100;
         }
 
         this.jump(timeStamp);
-        this.position.z += this.parent.state.gameSpeed;
+        this.element.position.z += this.parent.state.gameSpeed;
+        if (this.element.position.z > CAMERA_Z_POS + CAMERA_OFFSET) {
+            this.element.position.z -= 300;
 
-        if (this.position.y < -3) {
-            this.visible = false;
-        } else {
-            this.visible = true;
-        }
-
-        if (this.position.z > 350) {
-            this.position.z -= 300;
-
-            if (this.position.z < this.getPathEnd()) {
+            if (this.element.position.z < this.getPathEnd()) {
                 this.visible = false;
             }
         }

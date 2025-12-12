@@ -270,6 +270,7 @@ const onAnimationFrameHandler = (timeStamp) => {
         //     lose.play();
         // }
         gameOver = scene.pause();
+        lifeDiv.style.display = 'none';
         endContainer.style.display = 'flex';
         if (!tromPlayed) {
             const tromClone = tromSound.cloneNode();

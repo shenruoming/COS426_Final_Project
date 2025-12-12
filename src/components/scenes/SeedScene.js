@@ -1,6 +1,6 @@
 import * as Dat from 'dat.gui';
 import { Scene, Color } from 'three';
-import { Flower, Land, Runner, Mountains, Deer, Shark, Boulder } from 'objects';
+import { Acorn, Land, Runner, Mountains, Deer, Shark, Boulder } from 'objects';
 import { BasicLights } from 'lights';
 
 class SeedScene extends Scene {
@@ -32,6 +32,9 @@ class SeedScene extends Scene {
         // this.add(shark);
         const boulder = new Boulder();
         this.add(boulder);
+
+        const acorn = new Acorn(this, 0, 0, 0);
+        this.add(acorn)
         // const runner = new Runner();
 
         // this.addToUpdateList(runner);

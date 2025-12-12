@@ -13,6 +13,7 @@ class RunningPath extends Group {
             reached: false,
             terrainController: terrainController
         };
+        this.name = 'runningPath';
 
         const geometry = new BoxBufferGeometry( 8, 1, PATH_LENGTH );
         const material = new MeshBasicMaterial( { color: 0x964B00 } );
@@ -43,7 +44,6 @@ class RunningPath extends Group {
             return;
         }
         if (terrainPhase == TerrainPhase.BIKING && terrainController.numBikeLaps == 2) {
-            console.log("start run moving");
             this.visible = true;
             this.state.moving = true;
         }
@@ -53,6 +53,13 @@ class RunningPath extends Group {
             if (this.position.z > CAMERA_Z_POS + CAMERA_OFFSET) {
                 this.position.z = 0;
                 terrainController.numRunLaps += 1;
+            }
+        }
+        // attempt to change character
+        if (terrainPhase == TerrainPhase.RUNNING && terrainController.characterPhase != TerrainPhase.RUNNING) {
+            let bbox = new Box3().setFromObject(this.children[0]);
+            if (bbox.max.z >= 5) {
+                terrainController.characterPhase = TerrainPhase.RUNNING;
             }
         }
     }

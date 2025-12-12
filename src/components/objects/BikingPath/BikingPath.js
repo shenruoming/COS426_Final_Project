@@ -12,6 +12,8 @@ class BikingPath extends Group {
             reached: false,
         };
 
+        this.name = 'bikingPath';
+
         const geometry = new BoxBufferGeometry( 8, 1, PATH_LENGTH );
         const material = new MeshBasicMaterial( { color: 0x38393b } );
         const path = new Mesh( geometry, material );
@@ -51,7 +53,13 @@ class BikingPath extends Group {
                 terrainController.numBikeLaps += 1;
             }
         }
-        return;
+        // attempt to change character
+        if (terrainPhase == TerrainPhase.BIKING && terrainController.characterPhase != TerrainPhase.BIKING) {
+            let bbox = new Box3().setFromObject(this.children[0]);
+            if (bbox.max.z >= 5) {
+                terrainController.characterPhase = TerrainPhase.BIKING;
+            }
+        }
     }
 }
 

@@ -1,11 +1,6 @@
 import * as THREE from 'three';
 import {
     Group,
-    BoxGeometry,
-    Mesh,
-    MeshToonMaterial,
-    VertexColors,
-    BufferGeometry,
 } from 'three';
 import { TWEEN } from 'three/examples/jsm/libs/tween.module.min.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
@@ -59,7 +54,7 @@ class Runner extends Group {
         this.shirtColor = Colors.purple;
         this.shortsColor = Colors.lightblue;
         this.stepFreq = 2;
-        this.jumpHeight = 5; // controls how high the character jumps
+        this.jumpHeight = 6; // controls how high the character jumps
         this.jumpDuration = 0.5; // Controls how long the jump lasts (in seconds)
 
         // Initialize the character.
@@ -254,47 +249,6 @@ class Runner extends Group {
             self.element.scale.set(scaleFactor, scaleFactor, scaleFactor);
             self.add(self.element);
 
-            // Start receiving feedback from the player.
-            let keysAllowed = {};
-            // document.addEventListener('keydown', function (e) {
-            //     console.log(keysAllowed);
-            //     if (!gameOver) {
-            //         console.log('key pressed');
-            //         var key = e.key;
-            //         console.log(key);
-            //         if (keysAllowed[key] === false) return;
-            //         keysAllowed[key] = false;
-            //         console.log(keysAllowed);
-            //         if (paused && key.toLowerCase() != 'p') {
-            //             paused = false;
-            //             self.onUnpause();
-            //             if (key == 'ArrowUp') {
-            //                 self.onUpKeyPressed();
-            //             } else if (key == 'ArrowLeft') {
-            //                 self.onLeftKeyPressed();
-            //             } else if (key == 'ArrowRight') {
-            //                 self.onRightKeyPressed();
-            //             }
-            //         } else {
-            //             if (key.toLowerCase() == 'p') {
-            //                 paused = true;
-            //                 self.onPause();
-            //             }
-            //             if (key == 'ArrowUp' && !paused) {
-            //                 self.onUpKeyPressed();
-            //             }
-            //             if (key == 'ArrowLeft' && !paused) {
-            //                 self.onLeftKeyPressed();
-            //             }
-            //             if (key == 'ArrowRight' && !paused) {
-            //                 self.onRightKeyPressed();
-            //             }
-            //         }
-            // }
-            // });
-            // document.addEventListener('keyup', function (e) {
-            //     keysAllowed[e.key] = true;
-            // });
         }
 
         this.update = function () {
@@ -499,35 +453,6 @@ class Runner extends Group {
         this.position.y = 1.4;
         this.collected = false;
     }
-
-    // onCollision() {
-    //     if (!this.collected) {
-    //         this.collected = true;
-    //         const spin = new TWEEN.Tween(this.rotation).to(
-    //             { y: this.rotation.y + 2 * Math.PI },
-    //             200
-    //         );
-    //         const jumpUp = new TWEEN.Tween(this.position)
-    //             .to({ y: this.position.y + 2 }, 200)
-    //             .easing(TWEEN.Easing.Quadratic.Out);
-    //         const fallDown = new TWEEN.Tween(this.position)
-    //             .to({ y: -1 }, 300)
-    //             .easing(TWEEN.Easing.Quadratic.In);
-    //         const resetPos = new TWEEN.Tween(this.position).to(
-    //             { z: -(this.parent.fog.far + 50 * Math.random()) },
-    //             100
-    //         );
-
-    //         // Reset position after jumping up and down
-    //         jumpUp.onComplete(() => fallDown.start());
-    //         fallDown.onComplete(() => resetPos.start());
-    //         resetPos.onComplete(() => this.resetParams());
-
-    //         // Start animation
-    //         jumpUp.start();
-    //         spin.start();
-    //     }
-    // }
 }
 
 export default Runner;

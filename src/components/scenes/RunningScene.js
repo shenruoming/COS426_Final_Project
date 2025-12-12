@@ -1,5 +1,5 @@
 import * as Dat from 'dat.gui';
-import { Scene, Color, AxesHelper } from 'three';
+import { Scene, Color, AxesHelper, Box3 } from 'three';
 import {
     RunningPath,
     SwimmingPath,
@@ -12,9 +12,15 @@ import {
     BikingPath,
     Ocean,
     Mountains,
+    Deer,
+    Shark,
+    Bird,
+    Acorn,
+    Treasure
 } from 'objects';
 import { BasicLights } from 'lights';
-import { TerrainPhase } from '../config';
+import { TerrainPhase, obstacleXPositions } from '../config';
+import { getRandomObstacleX, getRandomSideX, getRandomRewardX } from '../utils/utils';
 
 class RunningScene extends Scene {
     constructor() {
@@ -28,14 +34,16 @@ class RunningScene extends Scene {
             updateList: [],
             terrainUpdateList: [],
             gameSpeed: 0,
-            prevGameSpeed: 1,
+            prevGameSpeed: 0.5,
             paused: true,
+            gameOver: false
         };
 
-        this.gameOver = false;
+        // other backgrounds
+        const backgrounds = [0x191970, 0x7ec0ee, 0x1f1757];
 
         // Set background to a nice color
-        this.background = new Color(0x7ec0ee);
+        this.background = new Color(backgrounds[2]);
 
         // add lights to scene
         const lights = new BasicLights();
@@ -43,18 +51,11 @@ class RunningScene extends Scene {
 
         this.terrainController = new TerrainController();
 
-        // add player to scene: runner, swimmer, biker
-        // const runner = new Runner();
-        // this.addToUpdateList(runner);
-        // this.add(runner);
+        this.obstacles_hit = new Set();
+        this.rewards_hit = new Set();
 
-        // const swimmer = new Swimmer();
-        // this.addToUpdateList(swimmer);
-        // this.add(swimmer);
-
-        const biker = new Biker();
-        this.addToUpdateList(biker);
-        this.add(biker);
+        // for switching character based on terrain
+        this.characterSwitch();
 
         // Add ground to scene: running
         const runningPath = new RunningPath(this);
@@ -67,6 +68,16 @@ class RunningScene extends Scene {
             this.add(spectator);
         }
 
+        this.obstacles = [];
+        this.rewards = [];
+
+        this.allRunObstacles = [];
+        this.allRunRewards = [];
+        this.allSwimObstacles = [];
+        this.allSwimRewards = [];
+        this.allBikeObstacles = [];
+        this.allBikeRewards = [];
+
         // add water to scene: swimming
         const swimmingPath = new SwimmingPath(this);
         const ocean = new Ocean(this);
@@ -75,6 +86,58 @@ class RunningScene extends Scene {
         const bikingPath = new BikingPath(this);
         const mountains = new Mountains(this);
         this.add(bikingPath, mountains);
+
+        // Add running obstacles to scene
+        const hasAcorn = [true, false, false, true, false, false, false, false, true, true, false, false, true, false]
+        const deerZPositions = [-20, -40, -70, -90, -110, -80, -50, -100, -140, -160, -180, -210, -240, -270, -240];
+        for (let i = 0; i < 14; i++) {
+            const x = getRandomObstacleX();
+            const deer = new Deer(this, x, 1.8, deerZPositions[i], hasAcorn[i]);
+            this.add(deer)
+            this.obstacles.push(deer);
+            this.allRunObstacles.push(deer);
+        }
+        // add sharks
+        const sharkZPositions = [-20, -80, -110, -50, -100, -140, -160, -180, -210, -240];
+        let direction = 1;
+        for (let i = 0; i < 10; i++) {
+            const x = getRandomObstacleX();
+            const shark = new Shark(this, -4 * direction, 1, sharkZPositions[i] + 100);
+            this.add(shark)
+            this.obstacles.push(shark);
+            this.allSwimObstacles.push(shark);
+            direction *= -1;
+        }
+        // add birds
+        const birdZPositions = [-20, -110, -160, -210, -140, -160, -180, -210, -240];
+        for (let i = 0; i < 4; i++) {
+            const x = getRandomSideX();
+            const bird = new Bird(this, -6 * direction, 1, birdZPositions[i] + 100);
+            this.add(bird)
+            this.obstacles.push(bird);
+            this.allBikeObstacles.push(bird);
+            direction *= -1;
+        }
+
+        // add acorns (running rewards)
+        const acornZPositions = [-35, -85, -100];
+        for (let i = 0; i < 3; i++) {
+            const x = getRandomRewardX();
+            const acorn = new Acorn(this, x, 1, acornZPositions[i]);
+            this.add(acorn)
+            this.rewards.push(acorn);
+            this.allRunRewards.push(acorn);
+        }
+
+        // add treasure (swimming rewards)
+        const treasureZPositions = [-15, -85, -100, -125];
+        for (let i = 0; i < 3; i++) {
+            const x = getRandomRewardX();
+            const treasure = new Treasure(this, x, 1, treasureZPositions[i] + 100);
+            this.add(treasure)
+            this.rewards.push(treasure);
+            this.allSwimRewards.push(treasure);
+        }
 
         // for debugging
         const axesHelper = new AxesHelper(5);
@@ -92,6 +155,11 @@ class RunningScene extends Scene {
     update(timeStamp) {
         const { updateList, terrainUpdateList } = this.state;
         this.terrainController.updateTerrain();
+
+        // for new terrain... switch character
+        if (this.terrainController.characterPhase !== this.currentPhase) {
+            this.characterSwitch(this.terrainController.characterPhase);
+        }
 
         // Call update for each object in the updateList
         for (const obj of updateList) {
@@ -111,6 +179,116 @@ class RunningScene extends Scene {
     unpause() {
         this.state.paused = false;
         this.state.gameSpeed = this.state.prevGameSpeed;
+    }
+
+    getObstacleCollision() {
+        const player = this.currentCharacter;
+        const playerZPos = player.position.z;
+        let playerBoundingBox = new Box3().setFromObject(player);
+        if (player.name == 'biker') {
+            playerBoundingBox = new Box3().setFromObject(player.element);
+        }
+        for (const obstacle of this.obstacles) {
+            if (obstacle.position.z - playerZPos > 5 || obstacle.position.z < playerZPos) {
+                continue;
+            }
+            if (obstacle.collidesWith(playerBoundingBox) && !this.obstacles_hit.has(obstacle.uuid)) {
+                this.obstacles_hit.add(obstacle.uuid);
+                return obstacle;
+            }
+        }
+        return null;
+    }
+
+    getRewardCollision() {
+        const player = this.currentCharacter;
+        const playerZPos = player.position.z;
+        let playerBoundingBox = new Box3().setFromObject(player);
+        if (player.name == 'biker') {
+            playerBoundingBox = new Box3().setFromObject(player.element);
+        }
+        for (const reward of this.rewards) {
+            if (reward.position.z - playerZPos > 5 || reward.position.z < playerZPos) {
+                continue;
+            }
+            if (reward.collidesWith(playerBoundingBox) && !this.rewards_hit.has(reward.uuid)) {
+                this.rewards_hit.add(reward.uuid);
+                return reward;
+            }
+        }
+        return null;
+    }
+
+    characterSwitch(newPhase) {
+        let currX = 0;
+        if (this.currentCharacter) {
+            // remove the old character
+            currX = this.currentCharacter.element.position.x;
+            this.remove(this.currentCharacter);
+
+            // remove old character from updateList
+            const index = this.state.updateList.indexOf(this.currentCharacter);
+            if (index > -1) {
+                this.state.updateList.splice(index, 1);
+            }
+
+            this.currentCharacter = null;
+        }
+
+        // new character if new terrain
+        let newCharacter = null;
+        switch (newPhase) {
+            case TerrainPhase.RUNNING:
+                newCharacter = new Runner();
+                newCharacter.element.position.x = currX;
+                break;
+            case TerrainPhase.SWIMMING:
+                newCharacter = new Swimmer(this);
+                newCharacter.element.position.x = currX;
+                break;
+            case TerrainPhase.BIKING:
+                newCharacter = new Biker();
+                newCharacter.element.position.x = currX;
+                newCharacter.children[0].position.x = currX;
+                break;
+            default:
+                break;
+        }
+
+        // add new char to list
+        if (newCharacter) {
+            this.currentCharacter = newCharacter;
+            this.addToUpdateList(this.currentCharacter);
+            this.add(this.currentCharacter);
+        }
+
+        this.currentPhase = newPhase;
+    }
+
+    handleRewardObstacleCollisions() {
+        let currRewards = [];
+        let currObstacles = [];
+        if (this.currentCharacter.name == 'runner') {
+            currRewards = this.allRunRewards;
+            currObstacles = this.allRunObstacles;
+        } else if (this.currentCharacter.name == 'swimmer') {
+            // currRewards = this.allSwimRewards;
+            // currObstacles = this.allSwimObstacles;
+        } else {
+            currRewards = this.allBikeRewards;
+            currObstacles = this.allBikeObstacles;
+        }
+        for (const obstacle of currObstacles) {
+            for (const reward of currRewards) {
+                if (Math.abs(obstacle.position.z - reward.position.z) > 4) {
+                    continue;
+                }
+                const rewardBBox = new Box3().setFromObject(reward);
+                if (obstacle.collidesWith(rewardBBox)) {
+                    reward.visible = false;
+                }
+            }
+        }
     }
 }
 

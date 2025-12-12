@@ -1,14 +1,8 @@
 import * as THREE from 'three';
 import {
     Group,
-    BoxGeometry,
-    Mesh,
-    MeshToonMaterial,
-    VertexColors,
-    BufferGeometry,
 } from 'three';
 import { TWEEN } from 'three/examples/jsm/libs/tween.module.min.js';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { Bicycle } from 'objects';
 
 const Colors = {
@@ -264,50 +258,6 @@ class Biker extends Group {
             const scaleFactor = 0.004;
             self.element.scale.set(scaleFactor, scaleFactor, scaleFactor);
             self.add(self.element);
-
-            var gameOver = false;
-            var paused = true;
-
-            // Start receiving feedback from the player.
-            let keysAllowed = {};
-            // document.addEventListener('keydown', function (e) {
-            //     if (!gameOver) {
-            //         console.log('key pressed');
-            //         var key = e.key;
-            //         console.log(key);
-            //         if (keysAllowed[key] === false) return;
-            //         keysAllowed[key] = false;
-            //         // console.log(keysAllowed);
-            //         if (paused && key.toLowerCase() != 'p') {
-            //             paused = false;
-            //             self.onUnpause();
-            //             if (key == 'ArrowUp') {
-            //                 self.onUpKeyPressed();
-            //             } else if (key == 'ArrowLeft') {
-            //                 self.onLeftKeyPressed();
-            //             } else if (key == 'ArrowRight') {
-            //                 self.onRightKeyPressed();
-            //             }
-            //         } else {
-            //             if (key.toLowerCase() == 'p') {
-            //                 paused = true;
-            //                 self.onPause();
-            //             }
-            //             if (key == 'ArrowUp' && !paused) {
-            //                 self.onUpKeyPressed();
-            //             }
-            //             if (key == 'ArrowLeft' && !paused) {
-            //                 self.onLeftKeyPressed();
-            //             }
-            //             if (key == 'ArrowRight' && !paused) {
-            //                 self.onRightKeyPressed();
-            //             }
-            //         }
-            //     }
-            // });
-            // document.addEventListener('keyup', function (e) {
-            //     keysAllowed[e.key] = true;
-            // });
         }
 
         this.update = function () {
@@ -344,6 +294,11 @@ class Biker extends Group {
                 self.element.position.y =
                     self.jumpHeight *
                     Math.sin((1 / self.jumpDuration) * Math.PI * jumpClock);
+
+                self.leftLowerLeg.rotation.x = Math.PI / 2;
+                self.rightLowerLeg.rotation.x = Math.PI / 2;
+                self.leftLeg.rotation.x = Math.PI / 2;
+                self.rightLeg.rotation.x = Math.PI / 2;
                 if (jumpClock > self.jumpDuration) {
                     self.isJumping = false;
                     self.runningStartTime += self.jumpDuration;

@@ -80,7 +80,6 @@ class Grass extends Group {
             return;
         }
         if (terrainPhase == TerrainPhase.BIKING && terrainController.numBikeLaps == 2) {
-            console.log("start run moving");
             this.visible = true;
             this.state.moving = true;
         }

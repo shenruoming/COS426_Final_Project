@@ -12,9 +12,6 @@ import {
     BikingPath,
     Ocean,
     Mountains,
-    Deer,
-    Shark,
-    Bird,
 } from 'objects';
 import { BasicLights } from 'lights';
 import { TerrainPhase } from '../config';
@@ -33,7 +30,6 @@ class RunningScene extends Scene {
             gameSpeed: 0,
             prevGameSpeed: 1,
             paused: true,
-            gameOver: false,
         };
 
         this.gameOver = false;
@@ -80,51 +76,6 @@ class RunningScene extends Scene {
         const mountains = new Mountains(this);
         this.add(bikingPath, mountains);
 
-        // Add running obstacles to scene
-        const deerZPositions = [
-            -20, -40, -70, -90, -110, -80, -50, -100, -140, -160, -180, -210,
-            -240, -270, -240,
-        ];
-        for (let i = 0; i < 14; i++) {
-            const x = getRandomObstacleX();
-            const deer = new Deer(this, x, 1.8, deerZPositions[i]);
-            this.add(deer);
-            this.obstacles.push(deer);
-        }
-        // add sharks
-        const sharkZPositions = [
-            -20, -80, -110, -50, -100, -140, -160, -180, -210, -240,
-        ];
-        let direction = 1;
-        for (let i = 0; i < 10; i++) {
-            const x = getRandomObstacleX();
-            const shark = new Shark(
-                this,
-                -4 * direction,
-                1,
-                sharkZPositions[i] + 100
-            );
-            this.add(shark);
-            this.obstacles.push(shark);
-            direction *= -1;
-        }
-        // add birds
-        const birdZPositions = [
-            -20, -110, -160, -210, -140, -160, -180, -210, -240,
-        ];
-        for (let i = 0; i < 4; i++) {
-            const x = getRandomSideX();
-            const bird = new Bird(
-                this,
-                -6 * direction,
-                1,
-                birdZPositions[i] + 100
-            );
-            this.add(bird);
-            this.obstacles.push(bird);
-            direction *= -1;
-        }
-
         // for debugging
         const axesHelper = new AxesHelper(5);
         this.add(axesHelper);
@@ -160,77 +111,6 @@ class RunningScene extends Scene {
     unpause() {
         this.state.paused = false;
         this.state.gameSpeed = this.state.prevGameSpeed;
-    }
-
-    getObstacleCollision() {
-        const player = this.currentCharacter;
-        const playerZPos = player.position.z;
-        let playerBoundingBox = new Box3().setFromObject(player);
-        if (player.name == 'biker') {
-            playerBoundingBox = new Box3().setFromObject(player.element);
-        }
-        for (const obstacle of this.obstacles) {
-            if (
-                obstacle.position.z - playerZPos > 5 ||
-                obstacle.position.z < playerZPos
-            ) {
-                continue;
-            }
-            if (
-                obstacle.collidesWith(playerBoundingBox) &&
-                !this.obstacles_hit.has(obstacle.uuid)
-            ) {
-                this.obstacles_hit.add(obstacle.uuid);
-                return obstacle;
-            }
-        }
-        return null;
-    }
-
-    characterSwitch(newPhase) {
-        let currX = 0;
-        if (this.currentCharacter) {
-            // remove the old character
-            currX = this.currentCharacter.element.position.x;
-            this.remove(this.currentCharacter);
-
-            // remove old character from updateList
-            const index = this.state.updateList.indexOf(this.currentCharacter);
-            if (index > -1) {
-                this.state.updateList.splice(index, 1);
-            }
-
-            this.currentCharacter = null;
-        }
-
-        // new character if new terrain
-        let newCharacter = null;
-        switch (newPhase) {
-            case TerrainPhase.RUNNING:
-                newCharacter = new Runner();
-                newCharacter.element.position.x = currX;
-                break;
-            case TerrainPhase.SWIMMING:
-                newCharacter = new Swimmer(this);
-                newCharacter.element.position.x = currX;
-                break;
-            case TerrainPhase.BIKING:
-                newCharacter = new Biker();
-                newCharacter.element.position.x = currX;
-                newCharacter.children[0].position.x = currX;
-                break;
-            default:
-                break;
-        }
-
-        // add new char to list
-        if (newCharacter) {
-            this.currentCharacter = newCharacter;
-            this.addToUpdateList(this.currentCharacter);
-            this.add(this.currentCharacter);
-        }
-
-        this.currentPhase = newPhase;
     }
 }
 

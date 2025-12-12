@@ -20,3 +20,7 @@ export * from './Acorn';
 export * from './FlyingAcorn';
 export * from './Seahorse';
 export * from './Treasure';
+export * from './Nest';
+export * from './MTree';
+export * from './Bush';
+export * from './TreeM';

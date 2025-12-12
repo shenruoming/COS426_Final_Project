@@ -23,6 +23,7 @@ import DAYLIGHT from '../../assets/daylight.jpg';
 import STARRY from '../../assets/starry_night.jpg';
 import splash from '../../sounds/finaldive.wav';
 import deer from '../../sounds/deer.wav';
+import squawk from '../../sounds/squawk.wav';
 
 // Add sounds
 const splashSound = new Audio(splash);
@@ -30,6 +31,9 @@ splashSound.load();
 
 const deerSound = new Audio(deer);
 deerSound.load();
+
+const squawkSound = new Audio(squawk);
+squawkSound.load();
 
 class RunningScene extends Scene {
     constructor() {
@@ -52,7 +56,7 @@ class RunningScene extends Scene {
             updateList: [],
             terrainUpdateList: [],
             gameSpeed: 0,
-            prevGameSpeed: 0.5,
+            prevGameSpeed: 0.7,
             paused: true,
             gameOver: false,
             startTime: Date.now(),
@@ -224,6 +228,9 @@ class RunningScene extends Scene {
                 } else if (this.terrainController.characterPhase == 0) {
                     let clone = deerSound.cloneNode();
                     clone.play();
+                } else if (this.terrainController.characterPhase == 4) {
+                    let squawkClone = squawkSound.cloneNode();
+                    squawkClone.play();
                 }
                 return obstacle;
             

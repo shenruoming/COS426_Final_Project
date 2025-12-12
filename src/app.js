@@ -11,14 +11,11 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RunningScene } from 'scenes';
 import { CAMERA_Y_POS, CAMERA_Z_POS } from './components/config';
 import { SeedScene } from './components/scenes';
-<<<<<<< Updated upstream
-=======
 import heartLink from './assets/heart.png';
 import runLink from './assets/runner.png';
 import swimLink from './assets/swimmer.png';
 import bikeLink from './assets/biker.png';
 import './app.css';
->>>>>>> Stashed changes
 
 // Initialize core ThreeJS components
 const scene = new RunningScene();
@@ -39,14 +36,6 @@ document.body.style.overflow = 'hidden'; // Fix scrolling
 document.body.appendChild(canvas);
 
 // Set up controls
-<<<<<<< Updated upstream
-// const controls = new OrbitControls(camera, canvas);
-// controls.enableDamping = true;
-// controls.enablePan = false;
-// controls.minDistance = 4;
-// controls.maxDistance = 16;
-// controls.update();
-=======
 const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
 controls.enablePan = false;
@@ -251,15 +240,12 @@ endContentButton.onclick = function () {
 };
 
 endContainer.style.display = 'none';
->>>>>>> Stashed changes
 
 // Render loop
 const onAnimationFrameHandler = (timeStamp) => {
     // controls.update();
     renderer.render(scene, camera);
     scene.update && scene.update(timeStamp);
-<<<<<<< Updated upstream
-=======
     const firstCollision = scene.getObstacleCollision();
     if (firstCollision != null) {
         console.log(firstCollision);
@@ -276,7 +262,6 @@ const onAnimationFrameHandler = (timeStamp) => {
         lifeDiv.style.display = 'none';
         // endContentScore.innerText = score;
     }
->>>>>>> Stashed changes
     window.requestAnimationFrame(onAnimationFrameHandler);
 };
 window.requestAnimationFrame(onAnimationFrameHandler);

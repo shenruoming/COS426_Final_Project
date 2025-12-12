@@ -12,12 +12,9 @@ import {
     BikingPath,
     Ocean,
     Mountains,
-<<<<<<< Updated upstream
-=======
     Deer,
     Shark,
     Bird,
->>>>>>> Stashed changes
 } from 'objects';
 import { BasicLights } from 'lights';
 import { TerrainPhase } from '../config';
@@ -36,10 +33,7 @@ class RunningScene extends Scene {
             gameSpeed: 0,
             prevGameSpeed: 1,
             paused: true,
-<<<<<<< Updated upstream
-=======
             gameOver: false,
->>>>>>> Stashed changes
         };
 
         this.gameOver = false;
@@ -86,8 +80,6 @@ class RunningScene extends Scene {
         const mountains = new Mountains(this);
         this.add(bikingPath, mountains);
 
-<<<<<<< Updated upstream
-=======
         // Add running obstacles to scene
         const deerZPositions = [
             -20, -40, -70, -90, -110, -80, -50, -100, -140, -160, -180, -210,
@@ -133,7 +125,6 @@ class RunningScene extends Scene {
             direction *= -1;
         }
 
->>>>>>> Stashed changes
         // for debugging
         const axesHelper = new AxesHelper(5);
         this.add(axesHelper);
@@ -170,8 +161,6 @@ class RunningScene extends Scene {
         this.state.paused = false;
         this.state.gameSpeed = this.state.prevGameSpeed;
     }
-<<<<<<< Updated upstream
-=======
 
     getObstacleCollision() {
         const player = this.currentCharacter;
@@ -243,7 +232,6 @@ class RunningScene extends Scene {
 
         this.currentPhase = newPhase;
     }
->>>>>>> Stashed changes
 }
 
 export default RunningScene;

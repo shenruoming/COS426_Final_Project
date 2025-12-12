@@ -159,21 +159,13 @@ beginContentButton.id = 'begin-button';
 beginContentButton.innerHTML = 'BEGIN';
 beginContent.appendChild(beginContentButton);
 
-// Set up countdown
-// var countDownDiv = document.createElement('div');
-// countDownDiv.id = 'countdown';
-// document.body.appendChild(countDownDiv);
-// let countDownNumber = document.createElement('h1');
-// countDownDiv.appendChild(countDownNumber);
-
 // Begin game
 beginContentButton.onclick = function () {
     beginContainer.style.display = 'none';
     bikeDiv.style.display = 'none';
     swimDiv.style.display = 'none';
     runDiv.style.display = 'none';
-    // countDownDiv.style.display = 'flex';
-    // scene.unpause();
+    scene.unpause();
     let timeleft = 3;
     lifeDiv.innerHTML = 'Lives: ';
     document.body.appendChild(lifeDiv);

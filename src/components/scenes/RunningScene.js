@@ -29,7 +29,7 @@ import {
     Dory,
     Nemo,
     Stingray,
-    Whale
+    Whale,
     MTree,
     Bush,
     Tree,
@@ -277,7 +277,7 @@ class RunningScene extends Scene {
         for (let i = 0; i < num_spectators; i++) {
             // random side and random x-location
             const side = getRandomSideX();
-            const x = 0;
+            let x = 0;
             if (side == -6) {
                 x = getRandomInt(-11, -6);
             } else if (side == 6) {

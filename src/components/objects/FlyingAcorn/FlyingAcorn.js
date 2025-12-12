@@ -3,7 +3,6 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { TWEEN } from 'three/examples/jsm/libs/tween.module.min.js';
 import MODEL from './Acorn.glb';
 import { CAMERA_Z_POS, CAMERA_OFFSET, TerrainPhase } from '../../config';
-import { getRandomRewardX } from '../../utils/utils';
 import { TerrainController } from '../TerrainController';
 import { RunningScene } from 'scenes';
 

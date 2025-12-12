@@ -57,7 +57,7 @@ class Acorn extends Group {
             this.position.z += this.parent.state.gameSpeed * 0.8;
             if (this.position.z > CAMERA_Z_POS + CAMERA_OFFSET) {
                 this.position.z -= Math.floor(Math.random() * 50) + 200;
-                this.position.x = getRandomRewardX();
+                this.position.x = getRandomRewardX() * 2;
                 this.visible = true;
 
                 if (this.parent.rewards_hit.has(this.uuid)) {

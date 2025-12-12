@@ -122,7 +122,7 @@ class RunningScene extends Scene {
         // add acorns (running rewards)
         const acornZPositions = [-35, -85, -100];
         for (let i = 0; i < 3; i++) {
-            const x = getRandomRewardX();
+            const x = getRandomRewardX() * 2;
             const acorn = new Acorn(this, x, 1, acornZPositions[i]);
             this.add(acorn)
             this.rewards.push(acorn);
@@ -132,7 +132,7 @@ class RunningScene extends Scene {
         // add treasure (swimming rewards)
         const treasureZPositions = [-15, -85, -100, -125];
         for (let i = 0; i < 3; i++) {
-            const x = getRandomRewardX();
+            const x = getRandomRewardX() * 2.3;
             const treasure = new Treasure(this, x, 1, treasureZPositions[i] + 100);
             this.add(treasure)
             this.rewards.push(treasure);

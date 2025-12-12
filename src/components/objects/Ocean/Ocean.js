@@ -42,6 +42,7 @@ class Ocean extends Group {
             color: 0x68c3c0,
             transparent: true,
             flatShading: true,
+            opacity: 0.75
         });
 
         const mesh = new THREE.Mesh(mergedGeo, material);

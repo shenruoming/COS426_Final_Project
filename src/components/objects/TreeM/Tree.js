@@ -1,9 +1,7 @@
 import { Group, Box3 } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { TWEEN } from 'three/examples/jsm/libs/tween.module.min.js';
 import MODEL from './tree.glb';
 import { CAMERA_Z_POS, CAMERA_OFFSET, TerrainPhase } from '../../config';
-import { getRandomExtraX } from '../../utils/utils';
 import { TerrainController } from '../TerrainController';
 import { RunningScene } from 'scenes';
 
@@ -16,7 +14,7 @@ class Tree extends Group {
         this.state = {
             inScene: true,
             pastEnd: false,
-            path: parent.getObjectByName('swimmingPath')
+            path: parent.getObjectByName('runningPath')
         };
 
         this.terrainController = parent.terrainController;
@@ -24,7 +22,6 @@ class Tree extends Group {
         // Load object
         const loader = new GLTFLoader();
 
-        this.name = 'Bush';
         loader.load(MODEL, (gltf) => {
             this.add(gltf.scene);
         });
@@ -47,7 +44,7 @@ class Tree extends Group {
                 this.position.y = -100;
             }
         } else {
-            // generate deer
+            // generate tree
             if (!inScene) {
                 this.visible = true;
                 this.state.inScene = true;
@@ -65,11 +62,6 @@ class Tree extends Group {
             }
         }
     }
-
-    // collidesWith(otherBBox) {
-    //     const bbox = new Box3().setFromObject(this);
-    //     return bbox.intersectsBox(otherBBox);
-    // }
 
     getPathEnd() {
         let bbox = new Box3().setFromObject(this.state.path.children[0]);

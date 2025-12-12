@@ -201,7 +201,7 @@ class RunningScene extends Scene {
         }
 
 
-        // add birdNest (running rewards)
+        // add birdNest
         const nestZPositions = [-20, -40, -70, -90, -110, -80, -50, -100, -140, -160, -180, -210,
             -240, -270, -240,];
         for (let i = 0; i < 14; i++) {
@@ -210,7 +210,7 @@ class RunningScene extends Scene {
             this.add(nest);
         }
 
-        // add birdNest (running rewards)
+        // add trees
         const treePositions = [0, -10, -5, -15, -20, -40, -70, -90, -110, -80, -50, -100, -140, -160, -180, -210,
             -240, -270, -240,];
         for (let i = 0; i < 18; i++) {
@@ -219,7 +219,7 @@ class RunningScene extends Scene {
             this.add(tree);
         }
 
-        // add birdNest (running rewards)
+        // add bushes
         const bushPositions = [10, 5, 7, 0, -10, -5, -15, -20, -40, -90, -110, -80, -100, -140,  -210,
             -240, -270, -240,];
         for (let i = 0; i < 18; i++) {
@@ -228,7 +228,7 @@ class RunningScene extends Scene {
             this.add(bush);
         }
 
-        // add birdNest (running rewards)
+        // add more trees
         const treeTPositions = [10, -10, -5, -15, -20, -40, -90, -110, -80,  -210,
             -240, -270, -240,];
         for (let i = 0; i < 13; i++) {
@@ -252,7 +252,7 @@ class RunningScene extends Scene {
             this.allSwimRewards.push(treasure);
         }
 
-        // add acorns (running rewards)
+        // add lightning (biking rewards)
         const lightningPos = [-15, -85, -100, -125];
         for (let i = 0; i < 3; i++) {
             const x = getRandomRewardX() * 2;

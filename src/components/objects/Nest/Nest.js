@@ -1,6 +1,5 @@
 import { Group, Box3 } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { TWEEN } from 'three/examples/jsm/libs/tween.module.min.js';
 import MODEL from './nest.glb';
 import { CAMERA_Z_POS, CAMERA_OFFSET, TerrainPhase } from '../../config';
 import { getRandomExtraX } from '../../utils/utils';
@@ -16,7 +15,7 @@ class Nest extends Group {
         this.state = {
             inScene: true,
             pastEnd: false,
-            path: parent.getObjectByName('swimmingPath')
+            path: parent.getObjectByName('runningPath')
         };
 
         this.terrainController = parent.terrainController;
@@ -66,11 +65,6 @@ class Nest extends Group {
             }
         }
     }
-
-    // collidesWith(otherBBox) {
-    //     const bbox = new Box3().setFromObject(this);
-    //     return bbox.intersectsBox(otherBBox);
-    // }
 
     getPathEnd() {
         let bbox = new Box3().setFromObject(this.state.path.children[0]);

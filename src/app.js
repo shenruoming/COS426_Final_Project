@@ -166,7 +166,6 @@ beginContentButton.onclick = function () {
     swimDiv.style.display = 'none';
     runDiv.style.display = 'none';
     scene.unpause();
-    let timeleft = 3;
     lifeDiv.innerHTML = 'Lives: ';
     document.body.appendChild(lifeDiv);
 

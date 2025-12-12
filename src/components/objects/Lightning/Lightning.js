@@ -16,7 +16,7 @@ class Lightning extends Group {
         this.state = {
             inScene: true,
             pastEnd: false,
-            path: parent.getObjectByName('swimmingPath')
+            path: parent.getObjectByName('runningPath')
         };
 
         this.terrainController = parent.terrainController;
@@ -47,7 +47,7 @@ class Lightning extends Group {
                 this.position.y = -100;
             }
         } else {
-            // generate deer
+            // generate lightning
             if (!inScene) {
                 this.visible = true;
                 this.state.inScene = true;

@@ -12,10 +12,14 @@ import { RunningScene } from 'scenes';
 import { CAMERA_Y_POS, CAMERA_Z_POS } from './components/config';
 import { SeedScene } from './components/scenes';
 import heartLink from './assets/heart.png';
+import game from './sounds/game_over.wav';
 import bikeLink from './assets/biker.png';
 import runLink from './assets/runner.png';
 import swimLink from './assets/swimmer.png';
 import './app.css';
+
+const tromSound = new Audio(game);
+tromSound.load();
 
 // Initialize core ThreeJS components
 const scene = new RunningScene();
@@ -48,6 +52,7 @@ controls.update();
 
 // game control variables
 let gameOver = false;
+let tromPlayed = false;
 
 // INTRO SCREEN: description, instruction button, begin button
 let instructionsContainer = document.createElement('div');
@@ -222,6 +227,7 @@ endContentButton.onclick = function () {
     lives = 3;
     // score = 0;
     gameOver = false;
+    tromPlayed = false;
     for (let i = 0; i < lives; i++) {
         let heartImg = document.createElement('img');
         heartImg.src = heartLink;
@@ -259,8 +265,14 @@ const onAnimationFrameHandler = (timeStamp) => {
     // game over if lives are 0
     if (lives <= 0) {
         gameOver = scene.pause();
-        endContainer.style.display = 'flex';
         lifeDiv.style.display = 'none';
+        endContainer.style.display = 'flex';
+        if (!tromPlayed) {
+            const tromClone = tromSound.cloneNode();
+            tromClone.play();
+            tromPlayed = true;
+        }
+        // endContentScore.innerText = score;
     }
     window.requestAnimationFrame(onAnimationFrameHandler);
 };

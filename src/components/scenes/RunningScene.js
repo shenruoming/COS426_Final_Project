@@ -1,5 +1,5 @@
 import * as Dat from 'dat.gui';
-import { Scene, Color, AxesHelper, Box3 } from 'three';
+import { Scene, Color, AxesHelper, Box3, TextureLoader, RepeatWrapping} from 'three';
 import {
     RunningPath,
     SwimmingPath,
@@ -16,11 +16,26 @@ import {
     Shark,
     Bird,
     Acorn,
-    Treasure
+    Treasure,
 } from 'objects';
 import { BasicLights } from 'lights';
 import { TerrainPhase, obstacleXPositions } from '../config';
 import { getRandomObstacleX, getRandomSideX, getRandomRewardX } from '../utils/utils';
+import DAYLIGHT from '../../assets/daylight.jpg';
+import STARRY from '../../assets/starry_night.jpg';
+import splash from '../../sounds/shark.wav';
+import deer from '../../sounds/deer.wav';
+import squawk from '../../sounds/squawk.wav';
+
+// Add sounds
+const splashSound = new Audio(splash);
+splashSound.load();
+
+const deerSound = new Audio(deer);
+deerSound.load();
+
+const squawkSound = new Audio(squawk);
+squawkSound.load();
 
 class RunningScene extends Scene {
     constructor() {
@@ -34,16 +49,21 @@ class RunningScene extends Scene {
             updateList: [],
             terrainUpdateList: [],
             gameSpeed: 0,
-            prevGameSpeed: 0.5,
+            prevGameSpeed: 0.7,
             paused: true,
             gameOver: false,
+            backgroundColors: [
+                0xffb3ba, 0xffdfba, 0xffffba, 0xbaffc9, 0xbae1ff,
+            ],
+            colorIndex: 0,
+            fadeDuration: 5000,
+            colorFadeStartTime: Date.now(),
         };
 
-        // other backgrounds
-        const backgrounds = [0x191970, 0x7ec0ee, 0x1f1757];
-
         // Set background to a nice color
-        this.background = new Color(backgrounds[2]);
+        this.background = new Color(
+            this.state.backgroundColors[this.state.colorIndex]
+        );
 
         // add lights to scene
         const lights = new BasicLights();
@@ -82,32 +102,64 @@ class RunningScene extends Scene {
         this.add(bikingPath, mountains);
 
         // Add running obstacles to scene
-        const hasAcorn = [true, false, false, true, false, false, false, false, true, true, false, false, true, false]
-        const deerZPositions = [-20, -40, -70, -90, -110, -80, -50, -100, -140, -160, -180, -210, -240, -270, -240];
+        const hasAcorn = [
+            true,
+            false,
+            false,
+            true,
+            false,
+            false,
+            false,
+            false,
+            true,
+            true,
+            false,
+            false,
+            true,
+            false,
+        ];
+        const deerZPositions = [
+            -20, -40, -70, -90, -110, -80, -50, -100, -140, -160, -180, -210,
+            -240, -270, -240,
+        ];
         for (let i = 0; i < 14; i++) {
             const x = getRandomObstacleX();
             const deer = new Deer(this, x, 1.8, deerZPositions[i], hasAcorn[i]);
-            this.add(deer)
+            this.add(deer);
             this.obstacles.push(deer);
             this.allRunObstacles.push(deer);
         }
         // add sharks
-        const sharkZPositions = [-20, -80, -110, -50, -100, -140, -160, -180, -210, -240];
+        const sharkZPositions = [
+            -20, -80, -110, -50, -100, -140, -160, -180, -210, -240,
+        ];
         let direction = 1;
         for (let i = 0; i < 10; i++) {
             const x = getRandomObstacleX();
-            const shark = new Shark(this, -4 * direction, 1, sharkZPositions[i] + 100);
-            this.add(shark)
+            const shark = new Shark(
+                this,
+                -4 * direction,
+                1,
+                sharkZPositions[i] + 100
+            );
+            this.add(shark);
             this.obstacles.push(shark);
             this.allSwimObstacles.push(shark);
             direction *= -1;
         }
         // add birds
-        const birdZPositions = [-20, -110, -160, -210, -140, -160, -180, -210, -240];
+        const birdZPositions = [
+            -20, -110, -160, -210, -140, -160, -180, -210, -240,
+        ];
         for (let i = 0; i < 4; i++) {
             const x = getRandomSideX();
-            const bird = new Bird(this, -6 * direction, 1, birdZPositions[i] + 100);
-            this.add(bird)
+            const bird = new Bird(
+                this,
+                -6 * direction,
+                1,
+                birdZPositions[i] + 100
+            );
+            this.add(bird);
             this.obstacles.push(bird);
             this.allBikeObstacles.push(bird);
             direction *= -1;
@@ -118,7 +170,7 @@ class RunningScene extends Scene {
         for (let i = 0; i < 3; i++) {
             const x = getRandomRewardX() * 2;
             const acorn = new Acorn(this, x, 1, acornZPositions[i]);
-            this.add(acorn)
+            this.add(acorn);
             this.rewards.push(acorn);
             this.allRunRewards.push(acorn);
         }
@@ -127,8 +179,13 @@ class RunningScene extends Scene {
         const treasureZPositions = [-15, -85, -100, -125];
         for (let i = 0; i < 3; i++) {
             const x = getRandomRewardX() * 2.3;
-            const treasure = new Treasure(this, x, 1, treasureZPositions[i] + 100);
-            this.add(treasure)
+            const treasure = new Treasure(
+                this,
+                x,
+                1,
+                treasureZPositions[i] + 100
+            );
+            this.add(treasure);
             this.rewards.push(treasure);
             this.allSwimRewards.push(treasure);
         }
@@ -153,12 +210,45 @@ class RunningScene extends Scene {
     }
 
     update(timeStamp) {
-        const { updateList, terrainUpdateList } = this.state;
+        const { updateList, terrainUpdateList, startTime, skyMode, textureList} = this.state;
         this.terrainController.updateTerrain();
 
         // for new terrain... switch character
         if (this.terrainController.characterPhase !== this.currentPhase) {
             this.characterSwitch(this.terrainController.characterPhase);
+        }
+
+        const {
+            backgroundColors,
+            colorIndex,
+            fadeDuration,
+            colorFadeStartTime,
+        } = this.state;
+        const now = Date.now();
+        const elapsed = now - colorFadeStartTime;
+        console.log(elapsed);
+
+        // alpha the interpolation factor
+        let t = Math.min(1.0, elapsed / fadeDuration);
+
+        // starting color (current color) and target color (next color)
+        const startColor = new Color(backgroundColors[colorIndex]);
+        const nextColorIndex = (colorIndex + 1) % backgroundColors.length;
+        const targetColor = new Color(backgroundColors[nextColorIndex]);
+
+        const interpolatedColor = new Color().lerpColors(
+            startColor,
+            targetColor,
+            t
+        );
+
+        // background color
+        this.background = interpolatedColor;
+
+        if (t === 1.0) {
+            // next fade cycle
+            this.state.colorIndex = nextColorIndex;
+            this.state.colorFadeStartTime = now;
         }
 
         // Call update for each object in the updateList
@@ -168,7 +258,13 @@ class RunningScene extends Scene {
         for (const obj of terrainUpdateList) {
             obj.update(timeStamp, this.terrainController);
         }
+
+        const currTime = Date.now() / 1000;
+        const elapsedTime = currTime - (this.state.startTime / 1000);
+
     }
+
+    
 
     pause() {
         this.state.paused = true;
@@ -189,12 +285,29 @@ class RunningScene extends Scene {
             playerBoundingBox = new Box3().setFromObject(player.element);
         }
         for (const obstacle of this.obstacles) {
-            if (obstacle.position.z - playerZPos > 5 || obstacle.position.z < playerZPos) {
+            if (
+                obstacle.position.z - playerZPos > 5 ||
+                obstacle.position.z < playerZPos
+            ) {
                 continue;
             }
-            if (obstacle.collidesWith(playerBoundingBox) && !this.obstacles_hit.has(obstacle.uuid)) {
+            if (
+                obstacle.collidesWith(playerBoundingBox) &&
+                !this.obstacles_hit.has(obstacle.uuid)
+            ) {
                 this.obstacles_hit.add(obstacle.uuid);
+                if (this.terrainController.characterPhase == 2) {
+                    let dingClone = splashSound.cloneNode();
+                    dingClone.play();
+                } else if (this.terrainController.characterPhase == 0) {
+                    let clone = deerSound.cloneNode();
+                    clone.play();
+                } else if (this.terrainController.characterPhase == 4) {
+                    let squawkClone = squawkSound.cloneNode();
+                    squawkClone.play();
+                }
                 return obstacle;
+            
             }
         }
         return null;
@@ -208,10 +321,16 @@ class RunningScene extends Scene {
             playerBoundingBox = new Box3().setFromObject(player.element);
         }
         for (const reward of this.rewards) {
-            if (reward.position.z - playerZPos > 5 || reward.position.z < playerZPos) {
+            if (
+                reward.position.z - playerZPos > 5 ||
+                reward.position.z < playerZPos
+            ) {
                 continue;
             }
-            if (reward.collidesWith(playerBoundingBox) && !this.rewards_hit.has(reward.uuid)) {
+            if (
+                reward.collidesWith(playerBoundingBox) &&
+                !this.rewards_hit.has(reward.uuid)
+            ) {
                 this.rewards_hit.add(reward.uuid);
                 return reward;
             }

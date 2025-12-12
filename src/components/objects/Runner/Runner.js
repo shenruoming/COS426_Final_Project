@@ -197,7 +197,7 @@ class Runner extends Group {
                 self.skinColor,
                 0,
                 -200,
-                0
+                5
             );
             self.leftLeg = self.createLimb(
                 50,
@@ -206,7 +206,7 @@ class Runner extends Group {
                 self.shortsColor,
                 -50,
                 -10,
-                30
+                5
             );
             self.leftLeg.add(self.leftLowerLeg);
 
@@ -217,7 +217,7 @@ class Runner extends Group {
                 self.skinColor,
                 0,
                 -200,
-                0
+                5
             );
             self.rightLeg = self.createLimb(
                 50,
@@ -226,7 +226,7 @@ class Runner extends Group {
                 self.shortsColor,
                 50,
                 -10,
-                30
+                5
             );
             self.rightLeg.add(self.rightLowerLeg);
 

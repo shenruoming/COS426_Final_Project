@@ -173,7 +173,7 @@ beginContentButton.onclick = function () {
     swimDiv.style.display = 'none';
     runDiv.style.display = 'none';
     // countDownDiv.style.display = 'flex';
-    scene.unpause();
+    // scene.unpause();
     let timeleft = 3;
     lifeDiv.innerHTML = 'Lives: ';
     document.body.appendChild(lifeDiv);

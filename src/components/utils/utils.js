@@ -1,6 +1,6 @@
 
 const obstacleXPositions = [0, 1.7, -1.7];
-const rewardXPositions = [0, 2, -2];
+const rewardXPositions = [0, 1, -1];
 const sideXPositions = [-6, 6];
 
 function getRandomObstacleX() {

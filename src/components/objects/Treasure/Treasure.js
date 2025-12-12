@@ -43,7 +43,7 @@ class Treasure extends Group {
     update(timeStamp) {
         let inScene = this.state.inScene;
         if (this.visible) {
-            this.position.y = sinusoid(0.8, -2, 1, 0);
+            this.position.y = sinusoid(0.8, -2, 1.3, 0);
         }
         if (this.terrainController.characterPhase != TerrainPhase.SWIMMING) {
             if (inScene) {
@@ -56,13 +56,13 @@ class Treasure extends Group {
             if (!inScene) {
                 this.visible = true;
                 this.state.inScene = true;
-                this.position.y = 1;
+                this.position.y = 1.25;
                 this.position.z -= 100;
             }
             this.position.z += this.parent.state.gameSpeed * 0.8;
             if (this.position.z > CAMERA_Z_POS + CAMERA_OFFSET) {
                 this.position.z -= Math.floor(Math.random() * 50) + 200;
-                this.position.x = getRandomRewardX();
+                this.position.x = getRandomRewardX() * 2.3;
                 this.visible = true;
 
                 if (this.parent.rewards_hit.has(this.uuid)) {

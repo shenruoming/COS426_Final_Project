@@ -41,9 +41,9 @@ class Treasure extends Group {
 
     update(timeStamp) {
         let inScene = this.state.inScene;
-        if (this.visible) {
-            this.position.y = sinusoid(0.3, -2, 1.5, 0);
-        }
+        // if (this.visible) {
+        //     this.position.y = sinusoid(0.3, -2, 1.5, 0);
+        // }
         if (this.terrainController.characterPhase != TerrainPhase.SWIMMING) {
             if (inScene) {
                 this.visible = false;

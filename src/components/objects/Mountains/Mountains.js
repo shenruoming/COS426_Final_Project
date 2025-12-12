@@ -148,7 +148,6 @@ class Mountains extends Group {
 
 
         const body = document.getElementsByTagName("body")[0];
-        console.log(body)
         body.appendChild(canvas);
 
         document.getElementById("NoiseMap").style.display = 'none';

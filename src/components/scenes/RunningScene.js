@@ -49,7 +49,7 @@ class RunningScene extends Scene {
             updateList: [],
             terrainUpdateList: [],
             gameSpeed: 0,
-            prevGameSpeed: 0.7,
+            prevGameSpeed: 0.3,
             paused: true,
             gameOver: false,
             backgroundColors: [
@@ -226,7 +226,6 @@ class RunningScene extends Scene {
         } = this.state;
         const now = Date.now();
         const elapsed = now - colorFadeStartTime;
-        console.log(elapsed);
 
         // alpha the interpolation factor
         let t = Math.min(1.0, elapsed / fadeDuration);
@@ -321,12 +320,9 @@ class RunningScene extends Scene {
             playerBoundingBox = new Box3().setFromObject(player.element);
         }
         for (const reward of this.rewards) {
-            if (
-                reward.position.z - playerZPos > 5 ||
-                reward.position.z < playerZPos
-            ) {
-                continue;
-            }
+            // if (reward.position.z - playerZPos > 5 || reward.position.z < playerZPos) {
+            //     continue;
+            // }
             if (
                 reward.collidesWith(playerBoundingBox) &&
                 !this.rewards_hit.has(reward.uuid)

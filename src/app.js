@@ -253,7 +253,7 @@ const onAnimationFrameHandler = (timeStamp) => {
     if (firstReward != null && lives < 3) {
         lives += 1;
         firstReward.visible = false;
-        console.log('got reward');
+        console.log(firstReward);
         let heartImg = document.createElement('img');
         heartImg.src = heartLink;
         heartDiv.appendChild(heartImg);

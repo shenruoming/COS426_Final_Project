@@ -182,15 +182,13 @@ beginContentButton.onclick = function () {
 };
 
 // Set up lives
-var lives = 3;
-var lifeDiv = document.createElement('div');
+let lives = 3;
+let lifeDiv = document.createElement('div');
 lifeDiv.id = 'lives';
 // Set up hearts
 let heartDiv = document.createElement('div');
 heartDiv.id = 'heart';
-
 document.body.appendChild(heartDiv);
-
 // Set up outro screen
 let endContainer = document.createElement('div');
 endContainer.id = 'end-container';
@@ -266,9 +264,6 @@ const onAnimationFrameHandler = (timeStamp) => {
 
     // game over if lives are 0
     if (lives <= 0) {
-        // if (!gameOver) {
-        //     lose.play();
-        // }
         gameOver = scene.pause();
         lifeDiv.style.display = 'none';
         endContainer.style.display = 'flex';

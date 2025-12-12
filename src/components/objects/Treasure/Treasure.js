@@ -17,7 +17,6 @@ class Treasure extends Group {
             inScene: true,
             pastEnd: false,
             path: parent.getObjectByName('bikingPath'),
-            startTime: new Date() / 1000
         };
 
         this.terrainController = parent.terrainController;
@@ -43,7 +42,7 @@ class Treasure extends Group {
     update(timeStamp) {
         let inScene = this.state.inScene;
         if (this.visible) {
-            this.position.y = sinusoid(0.8, -2, 1.3, 0);
+            this.position.y = sinusoid(0.3, -2, 1.5, 0);
         }
         if (this.terrainController.characterPhase != TerrainPhase.SWIMMING) {
             if (inScene) {

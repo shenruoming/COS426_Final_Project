@@ -93,12 +93,6 @@ class RunningScene extends Scene {
         const grass = new Grass(this);
         this.add(runningPath, grass);
 
-        // add spectators to scene
-        for (let i = 0; i < 5; i++) {
-            const spectator = new Spectator(this, -6, 10 * (i + 1) - 30);
-            this.add(spectator);
-        }
-
         this.obstacles = [];
         this.rewards = [];
 
@@ -205,6 +199,12 @@ class RunningScene extends Scene {
             this.add(treasure);
             this.rewards.push(treasure);
             this.allSwimRewards.push(treasure);
+        }
+
+        // add running spectators to scene
+        for (let i = 0; i < 5; i++) {
+            const spectator = new Spectator(this, -6, 1, 10 * (i + 1) - 30);
+            this.add(spectator);
         }
 
         // for debugging

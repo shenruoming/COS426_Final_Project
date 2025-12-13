@@ -291,8 +291,8 @@ class RunningScene extends Scene {
         }
 
         // for debugging
-        const axesHelper = new AxesHelper(5);
-        this.add(axesHelper);
+        // const axesHelper = new AxesHelper(5);
+        // this.add(axesHelper);
 
         this.addSeaCreatures();
     }

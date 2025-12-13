@@ -288,7 +288,6 @@ class RunningScene extends Scene {
 
             const spectator = new Spectator(this, x, y, z, side);
             this.add(spectator);
-            // this.spectators.push(spectator);
         }
 
         // for debugging
@@ -504,7 +503,6 @@ class RunningScene extends Scene {
     }
 
     addSeaCreatures() {
-        // testing sea creatures
         const dolphinZPositions = [-10, -60, -150, -90, -210, -240];
         let direction = 1;
         for (let i = 0; i < dolphinZPositions.length; i++) {
@@ -545,13 +543,6 @@ class RunningScene extends Scene {
             this.add(ray);
             direction *= -1;
         }
-
-        // for (let i = 0; i < 5; i++) {
-        //     const x = fishXPositions[Math.floor(Math.random() * fishXPositions.length)];
-        //     const ray = new Stingray(this, x * direction, -4, fishZPositions[i] + 61);
-        //     this.add(ray);
-        //     direction *= -1;
-        // }
 
         for (let i = 0; i < rayZPositions.length; i++) {
             const x = fishXPositions[Math.floor(Math.random() * fishXPositions.length)];
